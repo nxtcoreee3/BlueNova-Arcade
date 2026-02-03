@@ -1,45 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Maze Runner</title>
+<title>BlueNova Maze</title>
 <style>
-body{background:black;color:white;text-align:center;font-family:Arial;}
-canvas{border:2px solid #3da9ff;margin-top:10px;}
+body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;}
+canvas{display:block;margin:auto;margin-top:15px;border:2px solid #3da9ff;}
 #controls{display:none;}
-@media(max-width:768px){#controls{display:block;margin-top:10px;}}
-button{padding:10px 15px;margin:2px;background:#0f2547;color:white;border:none;border-radius:5px;font-size:18px;}
-button:hover{background:#1c3f6e;}
+button{padding:10px;background:#0f2547;border:none;color:white;border-radius:5px;margin:2px;cursor:pointer;}
+@media(max-width:768px){#controls{display:flex;justify-content:center;gap:5px;}}
 </style>
 </head>
 <body>
-<h2 style="color:#3da9ff;">Maze Runner</h2>
-<p>Use arrow keys or buttons below</p>
+<h2>BlueNova Maze</h2>
 <canvas id="c" width="400" height="400"></canvas>
-
 <div id="controls">
-<button onclick="pX-=10">←</button>
-<button onclick="pX+=10">→</button>
-<button onclick="pY-=10">↑</button>
-<button onclick="pY+=10">↓</button>
+  <button onclick="setDir(0,-1)">↑</button>
+  <button onclick="setDir(-1,0)">←</button>
+  <button onclick="setDir(1,0)">→</button>
+  <button onclick="setDir(0,1)">↓</button>
 </div>
-
 <script>
 const c=document.getElementById("c"),ctx=c.getContext("2d");
-let pX=20,pY=20;
-
-document.addEventListener("keydown",e=>{
-if(e.key=="ArrowUp") pY-=10;
-if(e.key=="ArrowDown") pY+=10;
-if(e.key=="ArrowLeft") pX-=10;
-if(e.key=="ArrowRight") pX+=10;
-});
-
-setInterval(()=>{
-ctx.clearRect(0,0,400,400);
-ctx.fillStyle="lime";
-ctx.fillRect(pX,pY,20,20);
-},30);
+const size=20;
+let maze=Array(20).fill(0).map(()=>Array(20).fill(0)),player={x:0,y:0},goal={x:19,y:19},dir={x:0,y:0};
+for(let i=0;i<20;i++){maze[i][Math.floor(Math.random()*20)]=1;}
+function draw(){ctx.fillStyle="black";ctx.fillRect(0,0,400,400);for(let y=0;y<20;y++){for(let x=0;x<20;x++){if(maze[y][x])ctx.fillStyle="#3da9ff";else ctx.fillStyle="white";ctx.fillRect(x*20,y*20,20,20);}}ctx.fillStyle="lime";ctx.fillRect(player.x*20,player.y*20,20,20);ctx.fillStyle="red";ctx.fillRect(goal.x*20,goal.y*20,20,20);}
+function update(){let nx=player.x+dir.x,ny=player.y+dir.y;if(nx>=0 && nx<20 && ny>=0 && ny<20 && maze[ny][nx]==0)player={x:nx,y:ny};if(player.x==goal.x && player.y==goal.y){alert("You Win!");player={x:0,y:0};}}function loop(){update();draw();requestAnimationFrame(loop);}
+function setDir(x,y){dir={x,y};}
+document.addEventListener("keydown",e=>{if(e.key=="ArrowUp")setDir(0,-1);if(e.key=="ArrowDown")setDir(0,1);if(e.key=="ArrowLeft")setDir(-1,0);if(e.key=="ArrowRight")setDir(1,0);});
+loop();
 </script>
 </body>
 </html>
