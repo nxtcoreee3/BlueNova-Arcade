@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>BlueNova Arcade</title>
+
+<style>
+body {
+    margin:0;
+    font-family: Arial;
+    background:#070b12;
+    color:white;
+}
+
+header {
+    padding:15px;
+    background:#081321;
+    text-align:center;
+    font-size:30px;
+    color:#3da9ff;
+    font-weight:bold;
+    box-shadow:0 0 15px #3da9ff44;
+}
+
+#player {
+    padding:10px;
+}
+
+iframe {
+    width:100%;
+    height:520px;
+    border:none;
+    border-radius:10px;
+    background:black;
+}
+
+#games {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:12px;
+    padding:15px;
+}
+
+button {
+    background:#0f1f35;
+    border:1px solid #3da9ff44;
+    color:white;
+    padding:12px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.15s;
+}
+
+button:hover {
+    background:#153458;
+    box-shadow:0 0 10px #3da9ff55;
+    transform:scale(1.03);
+}
+
+footer {
+    text-align:center;
+    padding:10px;
+    background:#081321;
+    font-size:14px;
+    color:#7bbcff;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width:8px;
+}
+::-webkit-scrollbar-thumb {
+    background:#3da9ff;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🚀 BlueNova Arcade
+</header>
+
+<div id="player">
+<iframe id="frame"></iframe>
+</div>
+
+<div id="games"></div>
+
+<footer>
+BlueNova Arcade  
+<br>
+Credits: nxtcoreee3
+</footer>
+
+<script>
+const HUB_NAME = "BlueNova Arcade";
+
+const games = [
+["Slope","https://slopegame.io"],
+["Retro Bowl","https://retro-bowl.co"],
+["1v1.lol","https://1v1.lol"],
+["Krunker","https://krunker.io"],
+["Shell Shockers","https://shellshock.io"],
+["Paper.io 2","https://paper-io.com"],
+["Subway Surfers","https://subwaysurfersgame.io"],
+["Tiny Fishing","https://tinyfishinggame.com"],
+["Cookie Clicker","https://orteil.dashnet.org/cookieclicker/"],
+["2048","https://play2048.co"],
+["Drift Hunters","https://drift-hunters.io"],
+["Run 3","https://run3.io"],
+["Stickman Hook","https://stickmanhookgame.io"],
+["Moto X3M","https://motox3m.co"],
+["A Dark Room","https://adarkroom.doublespeakgames.com"],
+["Among Us Web","https://among-us.io"],
+["Basket Random","https://basketrandomgame.io"],
+["Vex 6","https://vex6.io"],
+["Google Snake","https://www.google.com/fbx?fbx=snake_arcade"],
+["Friday Night Funkin","https://fnf.kdata1.com/"]
+];
+
+const container = document.getElementById("games");
+const frame = document.getElementById("frame");
+
+games.forEach(g=>{
+    let b=document.createElement("button");
+    b.innerText=g[0];
+    b.onclick=()=>frame.src=g[1];
+    container.appendChild(b);
+});
+
+console.log(HUB_NAME + " loaded.");
+</script>
+
+</body>
+</html>
