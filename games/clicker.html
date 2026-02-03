@@ -12,7 +12,6 @@ h2{color:#3da9ff;margin:15px;}
 .pet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;padding:10px;}
 .pet{background:#0f2547;border-radius:10px;padding:10px;cursor:pointer;transition:0.2s;position:relative;}
 .pet:hover{background:#1c3f6e;}
-.pet img{width:80px;height:80px;}
 .pet-name{margin-top:5px;font-weight:bold;}
 .pet-info{font-size:14px;margin-top:3px;}
 .floating{position:absolute;color:#3da9ff;font-weight:bold;animation:floatUp 1s ease-out;}
@@ -30,7 +29,7 @@ h2{color:#3da9ff;margin:15px;}
 // Game state
 let score = 0;
 
-// Start with 0 pets unlocked
+// Start with 0 pets
 const allPets = [
   {name:"Dog",icon:"🐶",cps:1,price:10,xp:0,level:1,owned:false},
   {name:"Cat",icon:"🐱",cps:2,price:50,xp:0,level:1,owned:false},
@@ -57,21 +56,21 @@ function renderPets(){
   });
 }
 
-// Buy or upgrade pet
+// Buy or upgrade pet (prevent going negative)
 function buyOrUpgrade(i,div){
   const pet = allPets[i];
   if(!pet.owned && score >= pet.price){
     score -= pet.price;
     pet.owned = true;
     showFloating("Purchased!",div);
-  } else if(pet.owned){
+  } else if(pet.owned && score >= Math.floor(pet.price/2)){
     score -= Math.floor(pet.price/2);
     pet.level++;
     pet.cps = Math.floor(pet.cps*1.5);
     showFloating(`Level ${pet.level}!`,div);
   }
-  renderPets();
   updateScore();
+  renderPets();
 }
 
 // Floating animation
