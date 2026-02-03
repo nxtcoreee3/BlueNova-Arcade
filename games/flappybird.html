@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>BlueNova Flappy Bird</title>
+<style>
+body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;}
+h2{color:#3da9ff;margin:15px;}
+canvas{border:2px solid #3da9ff;display:block;margin:0 auto;}
+</style>
+</head>
+<body>
+<h2>BlueNova Flappy Bird</h2>
+<canvas id="c" width="400" height="600"></canvas>
+<script>
+const c=document.getElementById("c"),ctx=c.getContext("2d");
+let bird={x:50,y:300,vy:0},gravity=0.5,jump=-10,pipes=[],frame=0,score=0;
+
+document.addEventListener("keydown",()=>{bird.vy=jump;});
+document.addEventListener("touchstart",()=>{bird.vy=jump;});
+
+function loop(){
+  ctx.fillStyle="black"; ctx.fillRect(0,0,400,600);
+  // bird
+  bird.vy+=gravity; bird.y+=bird.vy;
+  ctx.fillStyle="#3da9ff"; ctx.fillRect(bird.x,bird.y,30,30);
+  
+  // pipes
+  if(frame%100===0){
+    let h=Math.random()*200+100;
+    pipes.push({x:400,y:h});
+  }
+  pipes.forEach((p,i)=>{
+    p.x-=2;
+    ctx.fillStyle="green";
+    ctx.fillRect(p.x,0,50,p.y);
+    ctx.fillRect(p.x,p.y+150,50,600);
+    if(p.x+50<0)pipes.splice(i,1);
+    // collision
+    if(bird.x< p.x+50 && bird.x+30>p.x && (bird.y<p.y || bird.y+30>p.y+150)){reset(); return;}
+  });
+  
+  // floor/ceiling
+  if(bird.y<0 || bird.y>570) reset();
+  
+  ctx.fillStyle="white"; ctx.font="20px Arial"; ctx.fillText("Score: "+score,10,30);
+  
+  // score
+  pipes.forEach(p=>{if(!p.passed && p.x+50<bird.x){score++; p.passed=true;}});
+  frame++;
+  requestAnimationFrame(loop);
+}
+function reset(){bird={x:50,y:300,vy:0};pipes=[];score=0;}
+loop();
+</script>
+</body>
+</html>
