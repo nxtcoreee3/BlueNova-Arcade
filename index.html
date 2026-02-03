@@ -1,135 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BlueNova Arcade</title>
+
 <style>
-*{box-sizing:border-box;}
-body{margin:0; font-family:Arial,sans-serif; background:#060b12; color:white;}
-header{padding:16px; text-align:center; font-size:32px; font-weight:bold; color:#3da9ff; background:#081321; box-shadow:0 0 20px #3da9ff44;}
-nav{display:flex; justify-content:center; gap:10px; padding:10px; background:#0b1626;}
-nav button{background:#0f1f35; border:1px solid #3da9ff55; color:white; padding:10px 18px; border-radius:6px; cursor:pointer; transition:.2s;}
-nav button.active{background:#153458;}
-#player{padding:10px;}
-iframe{width:100%; height:65vh; max-height:750px; border:none; border-radius:10px; background:black;}
+body{
+margin:0;
+background:#050b15;
+color:white;
+font-family:Arial;
+}
+
+header{
+text-align:center;
+padding:15px;
+font-size:28px;
+background:#081a33;
+color:#3da9ff;
+}
+
+nav{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:10px;
+background:#071425;
+}
+
+nav button{
+background:#0f2547;
+border:none;
+color:white;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+nav button.active{
+background:#1c3f6e;
+}
+
+iframe{
+width:100%;
+height:60vh;
+border:none;
+background:black;
+}
+
 .section{display:none;}
 .section.active{display:block;}
-.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; padding:15px;}
-.grid button{background:#0f1f35; border:1px solid #3da9ff44; color:white; padding:14px; border-radius:8px; cursor:pointer; transition:.15s; font-size:1rem;}
-.grid button:hover{background:#153458; box-shadow:0 0 10px #3da9ff55; transform:scale(1.03);}
-details{padding:15px;}
-summary{cursor:pointer; font-size:18px; color:#7bbcff;}
-footer{text-align:center; padding:12px; background:#081321; color:#7bbcff;}
-::-webkit-scrollbar{width:8px;}
-::-webkit-scrollbar-thumb{background:#3da9ff;}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:10px;
+padding:15px;
+}
+
+.grid button{
+padding:12px;
+border-radius:8px;
+background:#0f2547;
+border:none;
+color:white;
+cursor:pointer;
+font-size:16px;
+text-align:left;
+}
+
+.grid button:hover{
+background:#1c3f6e;
+}
+
+footer{
+text-align:center;
+padding:10px;
+color:#3da9ff;
+}
 </style>
 </head>
+
 <body>
 
 <header>🚀 BlueNova Arcade</header>
 
 <nav>
-<button onclick="showTab('games')" id="tab-games" class="active">Games</button>
-<button onclick="showTab('risky')" id="tab-risky">Risky</button>
-<button onclick="showTab('emu')" id="tab-emu">Emulators</button>
+<button id="gbtn" class="active" onclick="tab('games')">Games</button>
+<button id="fbtn" onclick="tab('follow')">Follow Me</button>
 </nav>
 
-<div id="player">
-<iframe id="frame"></iframe>
-</div>
+<iframe id="player"></iframe>
 
 <!-- GAMES -->
 <div id="games" class="section active">
-<div class="grid" id="gameButtons"></div>
+<div class="grid">
+<button onclick="load('games/tictactoe.html')">🎮 Tic Tac Toe</button>
+<button onclick="load('games/snake.html')">🐍 Snake</button>
+<button onclick="load('games/clicker.html')">⚡ Clicker</button>
+<button onclick="load('games/memory.html')">🧠 Memory</button>
+<button onclick="load('games/connect4.html')">🔴 Connect 4</button>
+<button onclick="load('games/pong.html')">🏓 Pong</button>
+<button onclick="load('games/maze.html')">🧩 Maze</button>
+<button onclick="load('games/mini2048.html')">🔢 2048</button>
+</div>
 </div>
 
-<!-- RISKY -->
-<div id="risky" class="section">
-<details open>
-<summary>External Games (may open new tab)</summary>
-<div class="grid" id="riskyButtons"></div>
-</details>
+<!-- FOLLOW ME -->
+<div id="follow" class="section">
+<div class="grid">
+
+<button onclick="openLink('https://snapchat.com/t/yQxnxb4r')">👻 Snapchat</button>
+
+<button onclick="openLink('https://www.tiktok.com/@nxtcoreee3')">🎵 TikTok</button>
+
+<button onclick="openLink('https://www.instagram.com/nxtcoreee3')">📸 Instagram</button>
+
+<button onclick="openLink('https://discord.gg/8HSrr57nKQ')">💬 Discord</button>
+
+<button onclick="openLink('https://x.com/xnxtcoreee3')">🐦 X (Twitter)</button>
+
+<button onclick="openLink('https://t.me/nxtnxxt')">✈️ Telegram</button>
+
+<button onclick="openLink('https://github.com/nxtcoreee3')">💻 GitHub (Updates)</button>
+
+<button onclick="openLink('https://usemixy.com/@nxtcoreee3')">🎧 Mixy</button>
+
+</div>
 </div>
 
-<!-- EMULATORS -->
-<div id="emu" class="section">
-<div class="grid" id="emuButtons"></div>
-</div>
-
-<footer>BlueNova Arcade<br>Credits: nxtcoreee3</footer>
+<footer>
+BlueNova Arcade<br>
+Credits: nxtcoreee3
+</footer>
 
 <script>
-const frame=document.getElementById("frame");
-
-/* Tabs logic */
-function showTab(id){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-document.getElementById("tab-"+id)?.classList.add("active");
+function load(g){
+document.getElementById("player").src=g;
 }
 
-/* Open new tab */
-function openTab(url){window.open(url,"_blank");}
+function openLink(l){
+window.open(l,"_blank");
+}
 
-/* Built-in ad-free HTML5 games */
-const builtInGames=[
-["Tic Tac Toe","tictactoe.html"],
-["Snake","snake.html"],
-["Mini 2048","mini2048.html"],
-["Ping Pong","pingpong.html"],
-["Connect Four","connect4.html"],
-["Memory Game","memory.html"],
-["Pong AI","pongai.html"],
-["Simple Shooter","shooter.html"],
-["Maze Runner","mazerunner.html"],
-["Click Challenge","clickchallenge.html"]
-];
+function tab(t){
+games.classList.remove("active");
+follow.classList.remove("active");
+gbtn.classList.remove("active");
+fbtn.classList.remove("active");
 
-/* Risky / external games */
-const riskyGames=[
-["Slope","https://slopegame.io"],
-["Run 3","https://run3.io"],
-["Retro Bowl","https://retro-bowl.co"],
-["Vex 6","https://vex6.io"],
-["1v1.lol","https://1v1.lol"]
-];
-
-/* Emulator / portal sites */
-const emuSites=[
-["CrazyGames","https://www.crazygames.com"],
-["Poki","https://poki.com"],
-["Spelo.se","https://spelo.se"],
-["itch.io HTML5","https://itch.io/games/html5"]
-];
-
-/* Populate built-in games */
-const gCont=document.getElementById("gameButtons");
-builtInGames.forEach(g=>{
-  const b=document.createElement("button");
-  b.innerText=g[0];
-  b.onclick=()=>frame.src=g[1];
-  gCont.appendChild(b);
-});
-
-/* Populate risky games */
-const rCont=document.getElementById("riskyButtons");
-riskyGames.forEach(g=>{
-  const b=document.createElement("button");
-  b.innerText=g[0];
-  b.onclick=()=>openTab(g[1]);
-  rCont.appendChild(b);
-});
-
-/* Populate emulator sites */
-const eCont=document.getElementById("emuButtons");
-emuSites.forEach(s=>{
-  const b=document.createElement("button");
-  b.innerText=s[0];
-  b.onclick=()=>openTab(s[1]);
-  eCont.appendChild(b);
-});
+document.getElementById(t).classList.add("active");
+if(t=="games") gbtn.classList.add("active");
+if(t=="follow") fbtn.classList.add("active");
+}
 </script>
+
 </body>
 </html>
