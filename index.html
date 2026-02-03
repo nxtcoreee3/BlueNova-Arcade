@@ -4,34 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BlueNova Arcade</title>
-
 <style>
-body {margin:0; font-family:Arial; background:#060b12; color:white;}
-header {padding:16px; text-align:center; font-size:32px; font-weight:bold; color:#3da9ff; background:#081321; box-shadow:0 0 20px #3da9ff44;}
-nav {display:flex; justify-content:center; gap:10px; padding:10px; background:#0b1626;}
-nav button {background:#0f1f35; border:1px solid #3da9ff55; color:white; padding:10px 18px; border-radius:6px; cursor:pointer;}
-nav button.active {background:#153458;}
-#player {padding:10px;}
-iframe {width:100%; height:65vh; max-height:750px; border:none; border-radius:10px; background:black;}
-.section {display:none;}
-.section.active {display:block;}
-.grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; padding:15px;}
-.grid button {background:#0f1f35; border:1px solid #3da9ff44; color:white; padding:14px; border-radius:8px; cursor:pointer; transition:.15s; font-size:1rem;}
-.grid button:hover {background:#153458; box-shadow:0 0 10px #3da9ff55; transform:scale(1.03);}
-details {padding:15px;}
-summary {cursor:pointer; font-size:18px; color:#7bbcff;}
-footer {text-align:center; padding:12px; background:#081321; color:#7bbcff;}
-::-webkit-scrollbar {width:8px;}
-::-webkit-scrollbar-thumb {background:#3da9ff;}
+*{box-sizing:border-box;}
+body{margin:0; font-family:Arial,sans-serif; background:#060b12; color:white;}
+header{padding:16px; text-align:center; font-size:32px; font-weight:bold; color:#3da9ff; background:#081321; box-shadow:0 0 20px #3da9ff44;}
+nav{display:flex; justify-content:center; gap:10px; padding:10px; background:#0b1626;}
+nav button{background:#0f1f35; border:1px solid #3da9ff55; color:white; padding:10px 18px; border-radius:6px; cursor:pointer; transition:.2s;}
+nav button.active{background:#153458;}
+#player{padding:10px;}
+iframe{width:100%; height:65vh; max-height:750px; border:none; border-radius:10px; background:black;}
+.section{display:none;}
+.section.active{display:block;}
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; padding:15px;}
+.grid button{background:#0f1f35; border:1px solid #3da9ff44; color:white; padding:14px; border-radius:8px; cursor:pointer; transition:.15s; font-size:1rem;}
+.grid button:hover{background:#153458; box-shadow:0 0 10px #3da9ff55; transform:scale(1.03);}
+details{padding:15px;}
+summary{cursor:pointer; font-size:18px; color:#7bbcff;}
+footer{text-align:center; padding:12px; background:#081321; color:#7bbcff;}
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-thumb{background:#3da9ff;}
 </style>
 </head>
-
 <body>
 
 <header>🚀 BlueNova Arcade</header>
 
 <nav>
-<button onclick="showTab('games')" class="active" id="tab-games">Games</button>
+<button onclick="showTab('games')" id="tab-games" class="active">Games</button>
 <button onclick="showTab('risky')" id="tab-risky">Risky</button>
 <button onclick="showTab('emu')" id="tab-emu">Emulators</button>
 </nav>
@@ -55,37 +54,15 @@ footer {text-align:center; padding:12px; background:#081321; color:#7bbcff;}
 
 <!-- EMULATORS -->
 <div id="emu" class="section">
-<div class="grid">
-<button onclick="openTab('https://www.crazygames.com')">CrazyGames</button>
-<button onclick="openTab('https://poki.com')">Poki</button>
-<button onclick="openTab('https://spelo.se')">Spelo.se</button>
-<button onclick="openTab('https://itch.io/games/html5')">itch.io HTML5</button>
-</div>
+<div class="grid" id="emuButtons"></div>
 </div>
 
-<footer>
-BlueNova Arcade<br>Credits: nxtcoreee3
-</footer>
+<footer>BlueNova Arcade<br>Credits: nxtcoreee3</footer>
 
 <script>
-const frame = document.getElementById("frame");
+const frame=document.getElementById("frame");
 
-/* Built-in games using real HTML files */
-const builtInGames = [
-["Tic Tac Toe", "tictactoe.html"],
-["Snake", "snake.html"],
-["Mini 2048", "mini2048.html"]
-];
-
-/* Risky/external games */
-const riskyGames = [
-["Slope","https://slopegame.io"],
-["Run 3","https://run3.io"],
-["Retro Bowl","https://retro-bowl.co"],
-["Vex 6","https://vex6.io"]
-];
-
-/* Tab switcher */
+/* Tabs logic */
 function showTab(id){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
@@ -93,27 +70,66 @@ document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"))
 document.getElementById("tab-"+id)?.classList.add("active");
 }
 
-/* Open external site in new tab */
-function openTab(url){ window.open(url,"_blank"); }
+/* Open new tab */
+function openTab(url){window.open(url,"_blank");}
+
+/* Built-in ad-free HTML5 games */
+const builtInGames=[
+["Tic Tac Toe","tictactoe.html"],
+["Snake","snake.html"],
+["Mini 2048","mini2048.html"],
+["Ping Pong","pingpong.html"],
+["Connect Four","connect4.html"],
+["Memory Game","memory.html"],
+["Pong AI","pongai.html"],
+["Simple Shooter","shooter.html"],
+["Maze Runner","mazerunner.html"],
+["Click Challenge","clickchallenge.html"]
+];
+
+/* Risky / external games */
+const riskyGames=[
+["Slope","https://slopegame.io"],
+["Run 3","https://run3.io"],
+["Retro Bowl","https://retro-bowl.co"],
+["Vex 6","https://vex6.io"],
+["1v1.lol","https://1v1.lol"]
+];
+
+/* Emulator / portal sites */
+const emuSites=[
+["CrazyGames","https://www.crazygames.com"],
+["Poki","https://poki.com"],
+["Spelo.se","https://spelo.se"],
+["itch.io HTML5","https://itch.io/games/html5"]
+];
 
 /* Populate built-in games */
-const gCont = document.getElementById("gameButtons");
+const gCont=document.getElementById("gameButtons");
 builtInGames.forEach(g=>{
-let b=document.createElement("button");
-b.innerText=g[0];
-b.onclick=()=>frame.src=g[1];
-gCont.appendChild(b);
+  const b=document.createElement("button");
+  b.innerText=g[0];
+  b.onclick=()=>frame.src=g[1];
+  gCont.appendChild(b);
 });
 
 /* Populate risky games */
-const rCont = document.getElementById("riskyButtons");
+const rCont=document.getElementById("riskyButtons");
 riskyGames.forEach(g=>{
-let b=document.createElement("button");
-b.innerText=g[0];
-b.onclick=()=>openTab(g[1]);
-rCont.appendChild(b);
+  const b=document.createElement("button");
+  b.innerText=g[0];
+  b.onclick=()=>openTab(g[1]);
+  rCont.appendChild(b);
+});
+
+/* Populate emulator sites */
+const eCont=document.getElementById("emuButtons");
+emuSites.forEach(s=>{
+  const b=document.createElement("button");
+  b.innerText=s[0];
+  b.onclick=()=>openTab(s[1]);
+  eCont.appendChild(b);
 });
 </script>
-
 </body>
 </html>
