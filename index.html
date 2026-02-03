@@ -3,130 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <title>BlueNova Arcade</title>
-
 <style>
 body{
-margin:0;
-background:#050b15;
-color:white;
-font-family:Arial;
+  margin:0;
+  font-family:Arial;
+  background:#050b15;
+  color:white;
 }
-
 header{
-text-align:center;
-padding:15px;
-font-size:28px;
-background:#081a33;
-color:#3da9ff;
+  text-align:center;
+  padding:15px;
+  font-size:28px;
+  background:#081a33;
+  color:#3da9ff;
 }
-
 nav{
-display:flex;
-justify-content:center;
-gap:10px;
-padding:10px;
-background:#071425;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  padding:10px;
+  background:#071425;
+  flex-wrap:wrap;
 }
-
 nav button{
-background:#0f2547;
-border:none;
-color:white;
-padding:10px 16px;
-border-radius:8px;
-cursor:pointer;
+  background:#0f2547;
+  border:none;
+  color:white;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
 }
-
-nav button.active{
-background:#1c3f6e;
-}
-
-iframe{
-width:100%;
-height:60vh;
-border:none;
-background:black;
-}
-
+nav button.active{background:#1c3f6e;}
 .section{display:none;}
 .section.active{display:block;}
-
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-gap:10px;
-padding:15px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:10px;
+  padding:15px;
 }
-
 .grid button{
-padding:12px;
-border-radius:8px;
-background:#0f2547;
-border:none;
-color:white;
-cursor:pointer;
-font-size:16px;
-text-align:left;
+  padding:12px;
+  border-radius:8px;
+  background:#0f2547;
+  border:none;
+  color:white;
+  cursor:pointer;
+  font-size:16px;
+  text-align:left;
 }
-
-.grid button:hover{
-background:#1c3f6e;
-}
-
+.grid button:hover{background:#1c3f6e;}
 footer{
-text-align:center;
-padding:10px;
-color:#3da9ff;
+  text-align:center;
+  padding:10px;
+  color:#3da9ff;
+}
+iframe{
+  width:100%;
+  height:70vh;
+  border:none;
+  background:black;
 }
 </style>
 </head>
-
 <body>
 
 <header>🚀 BlueNova Arcade</header>
 
 <nav>
-<button id="gbtn" class="active" onclick="tab('games')">Games</button>
-<button id="fbtn" onclick="tab('follow')">Follow Me</button>
+  <button id="gbtn" class="active" onclick="tab('games')">Games</button>
+  <button id="fbtn" onclick="tab('follow')">Follow Me</button>
+  <button id="bbtn" onclick="tab('browser')">Browser</button>
 </nav>
 
-<iframe id="player"></iframe>
-
-<!-- GAMES -->
+<!-- GAMES TAB -->
 <div id="games" class="section active">
-<div class="grid">
-<button onclick="load('games/tictactoe.html')">🎮 Tic Tac Toe</button>
-<button onclick="load('games/snake.html')">🐍 Snake</button>
-<button onclick="load('games/clicker.html')">⚡ Clicker</button>
-<button onclick="load('games/memory.html')">🧠 Memory</button>
-<button onclick="load('games/connect4.html')">🔴 Connect 4</button>
-<button onclick="load('games/pong.html')">🏓 Pong</button>
-<button onclick="load('games/maze.html')">🧩 Maze</button>
-<button onclick="load('games/mini2048.html')">🔢 2048</button>
-</div>
+  <div class="grid">
+    <button onclick="load('games/tictactoe.html')">🎮 Tic Tac Toe</button>
+    <button onclick="load('games/snake.html')">🐍 Snake</button>
+    <button onclick="load('games/clicker.html')">⚡ Clicker</button>
+    <button onclick="load('games/memory.html')">🧠 Memory</button>
+    <button onclick="load('games/connect4.html')">🔴 Connect 4</button>
+    <button onclick="load('games/pong.html')">🏓 Pong</button>
+    <button onclick="load('games/maze.html')">🧩 Maze</button>
+    <button onclick="load('games/mini2048.html')">🔢 2048</button>
+  </div>
+  <iframe id="player"></iframe>
 </div>
 
-<!-- FOLLOW ME -->
+<!-- FOLLOW ME TAB -->
 <div id="follow" class="section">
-<div class="grid">
-
-<button onclick="openLink('https://snapchat.com/t/yQxnxb4r')">👻 Snapchat</button>
-
-<button onclick="openLink('https://www.tiktok.com/@nxtcoreee3')">🎵 TikTok</button>
-
-<button onclick="openLink('https://www.instagram.com/nxtcoreee3')">📸 Instagram</button>
-
-<button onclick="openLink('https://discord.gg/8HSrr57nKQ')">💬 Discord</button>
-
-<button onclick="openLink('https://x.com/xnxtcoreee3')">🐦 X (Twitter)</button>
-
-<button onclick="openLink('https://t.me/nxtnxxt')">✈️ Telegram</button>
-
-<button onclick="openLink('https://github.com/nxtcoreee3')">💻 GitHub (Updates)</button>
-
-<button onclick="openLink('https://usemixy.com/@nxtcoreee3')">🎧 Mixy</button>
-
+  <div class="grid">
+    <button onclick="openLink('https://snapchat.com/t/yQxnxb4r')">👻 Snapchat</button>
+    <button onclick="openLink('https://www.tiktok.com/@nxtcoreee3')">🎵 TikTok</button>
+    <button onclick="openLink('https://www.instagram.com/nxtcoreee3')">📸 Instagram</button>
+    <button onclick="openLink('https://discord.gg/8HSrr57nKQ')">💬 Discord</button>
+    <button onclick="openLink('https://x.com/xnxtcoreee3')">🐦 X (Twitter)</button>
+    <button onclick="openLink('https://t.me/nxtnxxt')">✈️ Telegram</button>
+    <button onclick="openLink('https://github.com/nxtcoreee3')">💻 GitHub (Updates)</button>
+    <button onclick="openLink('https://usemixy.com/@nxtcoreee3')">🎧 Mixy</button>
+  </div>
 </div>
+
+<!-- BROWSER TAB -->
+<div id="browser" class="section">
+  <iframe src="games/browser.html"></iframe>
 </div>
 
 <footer>
@@ -135,23 +116,24 @@ Credits: nxtcoreee3
 </footer>
 
 <script>
-function load(g){
-document.getElementById("player").src=g;
+function load(game){
+  document.getElementById("player").src=game;
 }
-
-function openLink(l){
-window.open(l,"_blank");
+function openLink(link){
+  window.open(link,"_blank");
 }
+function tab(name){
+  document.getElementById("games").classList.remove("active");
+  document.getElementById("follow").classList.remove("active");
+  document.getElementById("browser").classList.remove("active");
+  document.getElementById("gbtn").classList.remove("active");
+  document.getElementById("fbtn").classList.remove("active");
+  document.getElementById("bbtn").classList.remove("active");
 
-function tab(t){
-games.classList.remove("active");
-follow.classList.remove("active");
-gbtn.classList.remove("active");
-fbtn.classList.remove("active");
-
-document.getElementById(t).classList.add("active");
-if(t=="games") gbtn.classList.add("active");
-if(t=="follow") fbtn.classList.add("active");
+  document.getElementById(name).classList.add("active");
+  if(name=="games") document.getElementById("gbtn").classList.add("active");
+  if(name=="follow") document.getElementById("fbtn").classList.add("active");
+  if(name=="browser") document.getElementById("bbtn").classList.add("active");
 }
 </script>
 
