@@ -6,48 +6,75 @@
 <title>BlueNova Arcade</title>
 
 <style>
-/* Base styles */
+* { box-sizing:border-box; }
+
 body {
     margin:0;
-    font-family: Arial, sans-serif;
-    background:#070b12;
+    font-family:Arial, sans-serif;
+    background:#060b12;
     color:white;
 }
 
-/* Header */
 header {
-    padding:15px;
+    padding:16px;
     text-align:center;
-    font-size:6vw; /* scales with screen */
+    font-size:32px;
     font-weight:bold;
     color:#3da9ff;
     background:#081321;
-    box-shadow:0 0 15px #3da9ff44;
+    box-shadow:0 0 20px #3da9ff44;
 }
 
-/* Iframe container */
+nav {
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    padding:10px;
+    background:#0b1626;
+}
+
+nav button {
+    background:#0f1f35;
+    border:1px solid #3da9ff55;
+    color:white;
+    padding:10px 18px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+nav button.active {
+    background:#153458;
+}
+
 #player {
     padding:10px;
 }
 
 iframe {
     width:100%;
-    height:60vh; /* 60% of viewport height */
-    max-height:700px;
+    height:65vh;
+    max-height:750px;
     border:none;
     border-radius:10px;
     background:black;
 }
 
-/* Game buttons grid */
-#games {
+.section {
+    display:none;
+}
+
+.section.active {
+    display:block;
+}
+
+.grid {
     display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
     gap:12px;
     padding:15px;
 }
 
-button {
+.grid button {
     background:#0f1f35;
     border:1px solid #3da9ff44;
     color:white;
@@ -55,88 +82,176 @@ button {
     border-radius:8px;
     cursor:pointer;
     transition:.15s;
-    font-size:1.1rem;
+    font-size:1rem;
 }
 
-button:hover {
+.grid button:hover {
     background:#153458;
     box-shadow:0 0 10px #3da9ff55;
     transform:scale(1.03);
 }
 
-/* Footer */
-footer {
-    text-align:center;
-    padding:10px;
-    background:#081321;
-    font-size:14px;
+details {
+    padding:15px;
+}
+
+summary {
+    cursor:pointer;
+    font-size:18px;
     color:#7bbcff;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-    width:8px;
+footer {
+    text-align:center;
+    padding:12px;
+    background:#081321;
+    color:#7bbcff;
 }
-::-webkit-scrollbar-thumb {
-    background:#3da9ff;
-}
+
+/* scrollbar */
+::-webkit-scrollbar { width:8px; }
+::-webkit-scrollbar-thumb { background:#3da9ff; }
 </style>
 </head>
 
 <body>
 
-<header>
-🚀 BlueNova Arcade
-</header>
+<header>🚀 BlueNova Arcade</header>
+
+<nav>
+<button onclick="showTab('games')" class="active" id="tab-games">Games</button>
+<button onclick="showTab('risky')" id="tab-risky">Risky</button>
+<button onclick="showTab('emu')" id="tab-emu">Emulators</button>
+</nav>
 
 <div id="player">
-<iframe id="frame" src=""></iframe>
+<iframe id="frame"></iframe>
 </div>
 
-<div id="games"></div>
+<!-- GAMES -->
+<div id="games" class="section active">
+<div class="grid" id="gameButtons"></div>
+</div>
+
+<!-- RISKY -->
+<div id="risky" class="section">
+<details open>
+<summary>External Games (may open new tab)</summary>
+<div class="grid" id="riskyButtons"></div>
+</details>
+</div>
+
+<!-- EMULATORS -->
+<div id="emu" class="section">
+<div class="grid">
+<button onclick="openTab('https://www.crazygames.com')">CrazyGames</button>
+<button onclick="openTab('https://poki.com')">Poki</button>
+<button onclick="openTab('https://spelo.se')">Spelo.se</button>
+<button onclick="openTab('https://itch.io/games/html5')">itch.io HTML5</button>
+</div>
+</div>
 
 <footer>
-BlueNova Arcade <br>
+BlueNova Arcade<br>
 Credits: nxtcoreee3
 </footer>
 
 <script>
-const HUB_NAME = "BlueNova Arcade";
-
-const games = [
-["Slope","https://slopegame.io"],
-["Retro Bowl","https://retro-bowl.co"],
-["1v1.lol","https://1v1.lol"],
-["Krunker","https://krunker.io"],
-["Shell Shockers","https://shellshock.io"],
-["Paper.io 2","https://paper-io.com"],
-["Subway Surfers","https://subwaysurfersgame.io"],
-["Tiny Fishing","https://tinyfishinggame.com"],
-["Cookie Clicker","https://orteil.dashnet.org/cookieclicker/"],
-["2048","https://play2048.co"],
-["Drift Hunters","https://drift-hunters.io"],
-["Run 3","https://run3.io"],
-["Stickman Hook","https://stickmanhookgame.io"],
-["Moto X3M","https://motox3m.co"],
-["A Dark Room","https://adarkroom.doublespeakgames.com"],
-["Among Us Web","https://among-us.io"],
-["Basket Random","https://basketrandomgame.io"],
-["Vex 6","https://vex6.io"],
-["Google Snake","https://www.google.com/fbx?fbx=snake_arcade"],
-["Friday Night Funkin","https://fnf.kdata1.com/"]
-];
-
-const container = document.getElementById("games");
 const frame = document.getElementById("frame");
 
-games.forEach(g=>{
-    let b=document.createElement("button");
-    b.innerText=g[0];
-    b.onclick=()=>frame.src=g[1];
-    container.appendChild(b);
+/* Built-in games (data URLs) */
+
+const ticTacToe = `
+<html><body style="margin:0;background:#000;color:white;font-family:Arial;text-align:center">
+<h2>Tic Tac Toe</h2>
+<div id="b"></div>
+<script>
+let t="",c="X";
+for(let i=0;i<9;i++)t+='<button onclick="m('+i+')" style="width:80px;height:80px;font-size:30px">'+""+'</button>';
+b.innerHTML=t;
+function m(i){
+let x=b.children[i];
+if(x.innerText)return;
+x.innerText=c;
+c=c=="X"?"O":"X";
+}
+</script></body></html>
+`;
+
+const snake = `
+<html><body style="margin:0;background:black">
+<canvas id=c></canvas>
+<script>
+let ctx=c.getContext("2d");
+c.width=window.innerWidth;
+c.height=window.innerHeight;
+let s=[[50,50]],d=[10,0],f=[200,200];
+onkeydown=e=>{
+if(e.key=="ArrowUp")d=[0,-10];
+if(e.key=="ArrowDown")d=[0,10];
+if(e.key=="ArrowLeft")d=[-10,0];
+if(e.key=="ArrowRight")d=[10,0];
+}
+setInterval(()=>{
+ctx.clearRect(0,0,c.width,c.height);
+let h=[s[0][0]+d[0],s[0][1]+d[1]];
+s.unshift(h);
+if(h[0]==f[0]&&h[1]==f[1])f=[Math.random()*c.width|0,Math.random()*c.height|0];
+else s.pop();
+ctx.fillStyle="lime";
+s.forEach(p=>ctx.fillRect(p[0],p[1],10,10));
+ctx.fillStyle="red";
+ctx.fillRect(f[0],f[1],10,10);
+},80);
+</script></body></html>
+`;
+
+const mini2048 = `
+<html><body style="margin:0;background:#111;color:white;font-family:Arial;text-align:center">
+<h2>Mini 2048</h2>
+<p>Refresh to restart</p>
+</body></html>
+`;
+
+const builtInGames = [
+["Tic Tac Toe", "data:text/html;base64," + btoa(ticTacToe)],
+["Snake", "data:text/html;base64," + btoa(snake)],
+["Mini 2048", "data:text/html;base64," + btoa(mini2048)]
+];
+
+const riskyGames = [
+["Slope","https://slopegame.io"],
+["Run 3","https://run3.io"],
+["Retro Bowl","https://retro-bowl.co"],
+["Vex 6","https://vex6.io"]
+];
+
+function showTab(id){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+document.getElementById("tab-"+id)?.classList.add("active");
+}
+
+function openTab(url){
+window.open(url,"_blank");
+}
+
+const gCont=document.getElementById("gameButtons");
+builtInGames.forEach(g=>{
+let b=document.createElement("button");
+b.innerText=g[0];
+b.onclick=()=>frame.src=g[1];
+gCont.appendChild(b);
 });
 
-console.log(HUB_NAME + " loaded.");
+const rCont=document.getElementById("riskyButtons");
+riskyGames.forEach(g=>{
+let b=document.createElement("button");
+b.innerText=g[0];
+b.onclick=()=>openTab(g[1]);
+rCont.appendChild(b);
+});
 </script>
 
 </body>
