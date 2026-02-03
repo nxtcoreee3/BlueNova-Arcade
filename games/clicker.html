@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Clicker</title>
+<style>
+body{background:black;color:white;text-align:center;font-family:Arial;}
+button{padding:20px 40px; font-size:24px; background:#0f2547; color:white; border:none; border-radius:8px; cursor:pointer; margin-top:20px;}
+button:hover{background:#1c3f6e;}
+#score{font-size:32px; margin-top:20px;}
+</style>
+</head>
+<body>
+<h2 style="color:#3da9ff;">Click Challenge</h2>
+<div id="score">0</div>
+<button id="clickBtn">CLICK ME!</button>
+
+<script>
+let score=0;
+const scoreDiv=document.getElementById("score");
+document.getElementById("clickBtn").onclick = ()=>{score++; scoreDiv.innerText=score;}
+</script>
+</body>
+</html>
