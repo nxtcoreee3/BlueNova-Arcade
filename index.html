@@ -1,43 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BlueNova Arcade</title>
 
 <style>
+/* Base styles */
 body {
     margin:0;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background:#070b12;
     color:white;
 }
 
+/* Header */
 header {
     padding:15px;
-    background:#081321;
     text-align:center;
-    font-size:30px;
-    color:#3da9ff;
+    font-size:6vw; /* scales with screen */
     font-weight:bold;
+    color:#3da9ff;
+    background:#081321;
     box-shadow:0 0 15px #3da9ff44;
 }
 
+/* Iframe container */
 #player {
     padding:10px;
 }
 
 iframe {
     width:100%;
-    height:520px;
+    height:60vh; /* 60% of viewport height */
+    max-height:700px;
     border:none;
     border-radius:10px;
     background:black;
 }
 
+/* Game buttons grid */
 #games {
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
     gap:12px;
     padding:15px;
 }
@@ -46,10 +51,11 @@ button {
     background:#0f1f35;
     border:1px solid #3da9ff44;
     color:white;
-    padding:12px;
+    padding:14px;
     border-radius:8px;
     cursor:pointer;
     transition:.15s;
+    font-size:1.1rem;
 }
 
 button:hover {
@@ -58,6 +64,7 @@ button:hover {
     transform:scale(1.03);
 }
 
+/* Footer */
 footer {
     text-align:center;
     padding:10px;
@@ -83,14 +90,13 @@ footer {
 </header>
 
 <div id="player">
-<iframe id="frame"></iframe>
+<iframe id="frame" src=""></iframe>
 </div>
 
 <div id="games"></div>
 
 <footer>
-BlueNova Arcade  
-<br>
+BlueNova Arcade <br>
 Credits: nxtcoreee3
 </footer>
 
