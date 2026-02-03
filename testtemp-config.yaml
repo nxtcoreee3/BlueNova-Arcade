@@ -1,0 +1,11 @@
+environment: testing
+build: dev
+
+features:
+  fullscreen: true
+  pets: enabled
+  ai_games: enabled
+
+flags:
+  debug: true
+  animations: true
