@@ -19,8 +19,7 @@ This project is designed to be simple, fast, and easy to customize.
 ⸻
 
 # 🧑🏻‍💻 Open in browser
-[
-](https://nxtcoreee3.github.io/BlueNova-Arcade/)
+https://nxtcoreee3.github.io/BlueNova-Arcade/
 
 ⸻
 
