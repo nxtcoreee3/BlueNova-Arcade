@@ -28,75 +28,83 @@ h2{color:#3da9ff;margin:15px;}
 
 <script>
 // Game state
-let score=0;
-const pets=[
-  {name:"Dog",icon:"🐶",cps:1,price:10,xp:0,level:1},
-  {name:"Cat",icon:"🐱",cps:2,price:50,xp:0,level:1},
-  {name:"Bunny",icon:"🐰",cps:3,price:150,xp:0,level:1},
-  {name:"Fox",icon:"🦊",cps:5,price:500,xp:0,level:1},
-  {name:"Bear",icon:"🐻",cps:10,price:1000,xp:0,level:1},
-  {name:"Dragon",icon:"🐉",cps:25,price:5000,xp:0,level:1},
+let score = 0;
+
+// Start with 0 pets unlocked
+const allPets = [
+  {name:"Dog",icon:"🐶",cps:1,price:10,xp:0,level:1,owned:false},
+  {name:"Cat",icon:"🐱",cps:2,price:50,xp:0,level:1,owned:false},
+  {name:"Bunny",icon:"🐰",cps:3,price:150,xp:0,level:1,owned:false},
+  {name:"Fox",icon:"🦊",cps:5,price:500,xp:0,level:1,owned:false},
+  {name:"Bear",icon:"🐻",cps:10,price:1000,xp:0,level:1,owned:false},
+  {name:"Dragon",icon:"🐉",cps:25,price:5000,xp:0,level:1,owned:false},
 ];
 
-// Initialize pets
-const petGrid=document.getElementById("petGrid");
-pets.forEach((pet,i)=>{
-  const div=document.createElement("div");
-  div.className="pet";
-  div.dataset.index=i;
-  div.innerHTML=`<div class="pet-icon">${pet.icon}</div>
-                 <div class="pet-name">${pet.name}</div>
-                 <div class="pet-info">CPS: ${pet.cps} | Level: ${pet.level}<br>Price: ${pet.price}</div>`;
-  div.onclick=()=>buyPet(i);
-  petGrid.appendChild(div);
-});
+const petGrid = document.getElementById("petGrid");
 
-function buyPet(i){
-  const pet=pets[i];
-  if(score>=pet.price){
-    score-=pet.price;
+function renderPets(){
+  petGrid.innerHTML = "";
+  allPets.forEach((pet,i)=>{
+    const div = document.createElement("div");
+    div.className = "pet";
+    div.dataset.index = i;
+    let info = pet.owned ? `CPS: ${pet.cps} | Level: ${pet.level}` : `Price: ${pet.price}`;
+    div.innerHTML = `<div class="pet-icon">${pet.icon}</div>
+                     <div class="pet-name">${pet.name}</div>
+                     <div class="pet-info">${info}</div>`;
+    div.onclick = () => buyOrUpgrade(i,div);
+    petGrid.appendChild(div);
+  });
+}
+
+// Buy or upgrade pet
+function buyOrUpgrade(i,div){
+  const pet = allPets[i];
+  if(!pet.owned && score >= pet.price){
+    score -= pet.price;
+    pet.owned = true;
+    showFloating("Purchased!",div);
+  } else if(pet.owned){
+    score -= Math.floor(pet.price/2);
     pet.level++;
-    pet.cps=Math.floor(pet.cps*1.5);
-    pet.price=Math.floor(pet.price*2);
-    updatePets();
-    showFloating("+Pet!",petGrid.children[i]);
+    pet.cps = Math.floor(pet.cps*1.5);
+    showFloating(`Level ${pet.level}!`,div);
   }
+  renderPets();
   updateScore();
 }
 
+// Floating animation
 function showFloating(text,el){
-  const f=document.createElement("div");
+  const f = document.createElement("div");
   f.className="floating";
   f.innerText=text;
   el.appendChild(f);
   setTimeout(()=>el.removeChild(f),1000);
 }
 
-function updatePets(){
-  pets.forEach((pet,i)=>{
-    const div=petGrid.children[i];
-    div.querySelector(".pet-info").innerHTML=`CPS: ${pet.cps} | Level: ${pet.level}<br>Price: ${pet.price}`;
-  });
-}
-
+// Update score display
 function updateScore(){
-  document.getElementById("score").innerText="Score: "+score;
+  document.getElementById("score").innerText = "Score: "+score;
 }
 
 // Click button
-document.getElementById("clickBtn").onclick=()=>{
+document.getElementById("clickBtn").onclick = ()=>{
   score++;
   updateScore();
   showFloating("+1",document.getElementById("clickBtn"));
 }
 
-// Auto clicks from pets
+// Auto clicks from owned pets
 setInterval(()=>{
-  pets.forEach(p=>{
-    score+=p.cps;
+  allPets.forEach(p=>{
+    if(p.owned) score += p.cps;
   });
   updateScore();
 },1000);
+
+// Initial render
+renderPets();
 </script>
 </body>
 </html>
