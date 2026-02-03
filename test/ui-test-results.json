@@ -1,0 +1,21 @@
+{
+  "deviceTests": [
+    {
+      "device": "iPad",
+      "status": "pass",
+      "notes": "Touch controls working"
+    },
+    {
+      "device": "Desktop Chrome",
+      "status": "pass",
+      "notes": "Fullscreen OK"
+    },
+    {
+      "device": "Android",
+      "status": "partial",
+      "notes": "Maze arrows small"
+    }
+  ],
+  "lastRun": "2026-01-30",
+  "build": "BlueNova-0.1.0alpha"
+}
