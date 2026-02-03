@@ -6,111 +6,23 @@
 <title>BlueNova Arcade</title>
 
 <style>
-* { box-sizing:border-box; }
-
-body {
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#060b12;
-    color:white;
-}
-
-header {
-    padding:16px;
-    text-align:center;
-    font-size:32px;
-    font-weight:bold;
-    color:#3da9ff;
-    background:#081321;
-    box-shadow:0 0 20px #3da9ff44;
-}
-
-nav {
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    padding:10px;
-    background:#0b1626;
-}
-
-nav button {
-    background:#0f1f35;
-    border:1px solid #3da9ff55;
-    color:white;
-    padding:10px 18px;
-    border-radius:6px;
-    cursor:pointer;
-}
-
-nav button.active {
-    background:#153458;
-}
-
-#player {
-    padding:10px;
-}
-
-iframe {
-    width:100%;
-    height:65vh;
-    max-height:750px;
-    border:none;
-    border-radius:10px;
-    background:black;
-}
-
-.section {
-    display:none;
-}
-
-.section.active {
-    display:block;
-}
-
-.grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-    gap:12px;
-    padding:15px;
-}
-
-.grid button {
-    background:#0f1f35;
-    border:1px solid #3da9ff44;
-    color:white;
-    padding:14px;
-    border-radius:8px;
-    cursor:pointer;
-    transition:.15s;
-    font-size:1rem;
-}
-
-.grid button:hover {
-    background:#153458;
-    box-shadow:0 0 10px #3da9ff55;
-    transform:scale(1.03);
-}
-
-details {
-    padding:15px;
-}
-
-summary {
-    cursor:pointer;
-    font-size:18px;
-    color:#7bbcff;
-}
-
-footer {
-    text-align:center;
-    padding:12px;
-    background:#081321;
-    color:#7bbcff;
-}
-
-/* scrollbar */
-::-webkit-scrollbar { width:8px; }
-::-webkit-scrollbar-thumb { background:#3da9ff; }
+body {margin:0; font-family:Arial; background:#060b12; color:white;}
+header {padding:16px; text-align:center; font-size:32px; font-weight:bold; color:#3da9ff; background:#081321; box-shadow:0 0 20px #3da9ff44;}
+nav {display:flex; justify-content:center; gap:10px; padding:10px; background:#0b1626;}
+nav button {background:#0f1f35; border:1px solid #3da9ff55; color:white; padding:10px 18px; border-radius:6px; cursor:pointer;}
+nav button.active {background:#153458;}
+#player {padding:10px;}
+iframe {width:100%; height:65vh; max-height:750px; border:none; border-radius:10px; background:black;}
+.section {display:none;}
+.section.active {display:block;}
+.grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; padding:15px;}
+.grid button {background:#0f1f35; border:1px solid #3da9ff44; color:white; padding:14px; border-radius:8px; cursor:pointer; transition:.15s; font-size:1rem;}
+.grid button:hover {background:#153458; box-shadow:0 0 10px #3da9ff55; transform:scale(1.03);}
+details {padding:15px;}
+summary {cursor:pointer; font-size:18px; color:#7bbcff;}
+footer {text-align:center; padding:12px; background:#081321; color:#7bbcff;}
+::-webkit-scrollbar {width:8px;}
+::-webkit-scrollbar-thumb {background:#3da9ff;}
 </style>
 </head>
 
@@ -152,73 +64,20 @@ footer {
 </div>
 
 <footer>
-BlueNova Arcade<br>
-Credits: nxtcoreee3
+BlueNova Arcade<br>Credits: nxtcoreee3
 </footer>
 
 <script>
 const frame = document.getElementById("frame");
 
-/* Built-in games (data URLs) */
-
-const ticTacToe = `
-<html><body style="margin:0;background:#000;color:white;font-family:Arial;text-align:center">
-<h2>Tic Tac Toe</h2>
-<div id="b"></div>
-<script>
-let t="",c="X";
-for(let i=0;i<9;i++)t+='<button onclick="m('+i+')" style="width:80px;height:80px;font-size:30px">'+""+'</button>';
-b.innerHTML=t;
-function m(i){
-let x=b.children[i];
-if(x.innerText)return;
-x.innerText=c;
-c=c=="X"?"O":"X";
-}
-</script></body></html>
-`;
-
-const snake = `
-<html><body style="margin:0;background:black">
-<canvas id=c></canvas>
-<script>
-let ctx=c.getContext("2d");
-c.width=window.innerWidth;
-c.height=window.innerHeight;
-let s=[[50,50]],d=[10,0],f=[200,200];
-onkeydown=e=>{
-if(e.key=="ArrowUp")d=[0,-10];
-if(e.key=="ArrowDown")d=[0,10];
-if(e.key=="ArrowLeft")d=[-10,0];
-if(e.key=="ArrowRight")d=[10,0];
-}
-setInterval(()=>{
-ctx.clearRect(0,0,c.width,c.height);
-let h=[s[0][0]+d[0],s[0][1]+d[1]];
-s.unshift(h);
-if(h[0]==f[0]&&h[1]==f[1])f=[Math.random()*c.width|0,Math.random()*c.height|0];
-else s.pop();
-ctx.fillStyle="lime";
-s.forEach(p=>ctx.fillRect(p[0],p[1],10,10));
-ctx.fillStyle="red";
-ctx.fillRect(f[0],f[1],10,10);
-},80);
-</script></body></html>
-`;
-
-const mini2048 = `
-<html><body style="margin:0;background:#111;color:white;font-family:Arial;text-align:center">
-<h2>Mini 2048</h2>
-<p>Refresh to restart</p>
-</body></html>
-`;
-
+/* Built-in games using real HTML files */
 const builtInGames = [
-["Tic Tac Toe", "data:text/html;base64," + btoa(ticTacToe)],
-["Snake", "data:text/html;base64," + btoa(snake)],
-["Mini 2048", "data:text/html;base64," + btoa(mini2048)]
+["Tic Tac Toe", "tictactoe.html"],
+["Snake", "snake.html"],
+["Mini 2048", "mini2048.html"]
 ];
 
+/* Risky/external games */
 const riskyGames = [
 ["Slope","https://slopegame.io"],
 ["Run 3","https://run3.io"],
@@ -226,6 +85,7 @@ const riskyGames = [
 ["Vex 6","https://vex6.io"]
 ];
 
+/* Tab switcher */
 function showTab(id){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
@@ -233,11 +93,11 @@ document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"))
 document.getElementById("tab-"+id)?.classList.add("active");
 }
 
-function openTab(url){
-window.open(url,"_blank");
-}
+/* Open external site in new tab */
+function openTab(url){ window.open(url,"_blank"); }
 
-const gCont=document.getElementById("gameButtons");
+/* Populate built-in games */
+const gCont = document.getElementById("gameButtons");
 builtInGames.forEach(g=>{
 let b=document.createElement("button");
 b.innerText=g[0];
@@ -245,7 +105,8 @@ b.onclick=()=>frame.src=g[1];
 gCont.appendChild(b);
 });
 
-const rCont=document.getElementById("riskyButtons");
+/* Populate risky games */
+const rCont = document.getElementById("riskyButtons");
 riskyGames.forEach(g=>{
 let b=document.createElement("button");
 b.innerText=g[0];
