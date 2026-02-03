@@ -2,66 +2,59 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Snake</title>
+<title>BlueNova Snake</title>
 <style>
-body{margin:0; background:black; display:flex; flex-direction:column; align-items:center;}
-canvas{border:2px solid #3da9ff; margin-top:10px;}
-#controls{margin-top:10px;}
-button{margin:2px; padding:10px; background:#0f2547; color:white; border:none; border-radius:5px; font-size:18px;}
+body{margin:0;background:#050b15;display:flex;flex-direction:column;align-items:center;font-family:Arial;color:white;}
+h2{color:#3da9ff;margin:15px;}
+canvas{border:2px solid #3da9ff;margin-top:10px;}
+#controls{display:none;margin-top:10px;}
+button{padding:10px 15px;margin:2px;background:#0f2547;color:white;border:none;border-radius:5px;font-size:18px;cursor:pointer;}
 button:hover{background:#1c3f6e;}
+@media(max-width:768px){#controls{display:flex;gap:5px;}}
 </style>
 </head>
 <body>
-<h2 style="color:#3da9ff;">Snake</h2>
+<h2>BlueNova Snake</h2>
 <canvas id="c" width="400" height="400"></canvas>
-
 <div id="controls">
-<button onclick="setDir(0,-10)">↑</button><br>
-<button onclick="setDir(-10,0)">←</button>
-<button onclick="setDir(10,0)">→</button><br>
-<button onclick="setDir(0,10)">↓</button>
+  <button onclick="setDir(0,-10)">↑</button><br>
+  <button onclick="setDir(-10,0)">←</button>
+  <button onclick="setDir(10,0)">→</button><br>
+  <button onclick="setDir(0,10)">↓</button>
 </div>
 
 <script>
 const c=document.getElementById("c"),ctx=c.getContext("2d");
-let snake=[[20,20]],dir=[10,0];
-let food=[Math.floor(Math.random()*40)*10,Math.floor(Math.random()*40)*10];
-
+let snake=[[20,20]],dir=[10,0],fruit=[200,200],score=0;
 document.addEventListener("keydown", e=>{
-if(e.key=="ArrowUp") dir=[0,-10];
-if(e.key=="ArrowDown") dir=[0,10];
-if(e.key=="ArrowLeft") dir=[-10,0];
-if(e.key=="ArrowRight") dir=[10,0];
+  if(e.key=="ArrowUp") dir=[0,-10];
+  if(e.key=="ArrowDown") dir=[0,10];
+  if(e.key=="ArrowLeft") dir=[-10,0];
+  if(e.key=="ArrowRight") dir=[10,0];
 });
-
 function setDir(x,y){dir=[x,y];}
 
-function loop(){
-ctx.fillStyle="black";
-ctx.fillRect(0,0,c.width,c.height);
-
-let head=[snake[0][0]+dir[0],snake[0][1]+dir[1]];
-snake.unshift(head);
-
-if(head[0]===food[0] && head[1]===food[1]){
-food=[Math.floor(Math.random()*40)*10,Math.floor(Math.random()*40)*10];
-}else snake.pop();
-
-snake.forEach(p=>{
-ctx.fillStyle="lime"; ctx.fillRect(p[0],p[1],10,10);
-});
-
-ctx.fillStyle="red"; ctx.fillRect(food[0],food[1],10,10);
-
-// check collision with self
-for(let i=1;i<snake.length;i++){
-if(snake[i][0]===head[0] && snake[i][1]===head[1]){
-alert("Game Over"); snake=[[20,20]]; dir=[10,0];
-}
-}
+function draw(){
+  ctx.fillStyle="black"; ctx.fillRect(0,0,400,400);
+  snake.forEach((s,i)=>{
+    ctx.fillStyle=i===0?"#3da9ff":"lime";
+    ctx.fillRect(s[0],s[1],10,10);
+  });
+  ctx.fillStyle="red"; ctx.fillRect(fruit[0],fruit[1],10,10);
 }
 
-setInterval(loop,100);
+function update(){
+  let head=[snake[0][0]+dir[0],snake[0][1]+dir[1]];
+  snake.unshift(head);
+  if(head[0]===fruit[0] && head[1]===fruit[1]){
+    score+=10;
+    fruit=[Math.floor(Math.random()*40)*10,Math.floor(Math.random()*40)*10];
+  }else snake.pop();
+  // collision with self
+  for(let i=1;i<snake.length;i++){if(snake[i][0]===head[0] && snake[i][1]===head[1]){alert("Game Over. Score: "+score); snake=[[20,20]]; dir=[10,0]; score=0;}}
+}
+
+setInterval(()=>{update(); draw();},100);
 </script>
 </body>
 </html>
