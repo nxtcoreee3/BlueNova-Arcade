@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Connect 4</title>
+<style>
+body{background:black;color:white;text-align:center;font-family:Arial;}
+table{margin:auto;border-collapse:collapse;margin-top:20px;}
+td{width:60px;height:60px;border:2px solid #3da9ff;border-radius:50%;cursor:pointer;}
+.red{background:red;}
+.yellow{background:yellow;}
+</style>
+</head>
+<body>
+<h2 style="color:#3da9ff;">Connect 4</h2>
+<table id="board"></table>
+
+<script>
+const board=document.getElementById("board");
+let cells=[],turn="red";
+
+// create table
+for(let r=0;r<6;r++){
+const tr=document.createElement("tr");
+cells[r]=[];
+for(let c=0;c<7;c++){
+const td=document.createElement("td");
+td.addEventListener("click",()=>place(c));
+tr.appendChild(td);
+cells[r][c]=td;
+}
+board.appendChild(tr);
+}
+
+// place piece
+function place(col){
+for(let r=5;r>=0;r--){
+if(!cells[r][col].className){
+cells[r][col].className=turn;
+turn=turn==="red"?"yellow":"red";
+break;
+}
+}
+}
+</script>
+</body>
+</html>
