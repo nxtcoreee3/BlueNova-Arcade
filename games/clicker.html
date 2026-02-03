@@ -2,23 +2,95 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Clicker</title>
+<title>BlueNova Pet Clicker</title>
 <style>
-body{background:black;color:white;text-align:center;font-family:Arial;}
-button{padding:20px 40px; font-size:24px; background:#0f2547; color:white; border:none; border-radius:8px; cursor:pointer; margin-top:20px;}
-button:hover{background:#1c3f6e;}
-#score{font-size:32px; margin-top:20px;}
+body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;}
+h2{color:#3da9ff;margin-top:20px;}
+#scoreboard{font-size:24px;margin:10px;}
+#level{font-size:20px;margin-bottom:20px;}
+#mainBtn{width:120px;height:120px;border-radius:50%;font-size:32px;background:#0f2547;color:white;border:none;cursor:pointer;transition:0.2s;}
+#mainBtn:active{transform:scale(1.1);}
+#pets{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px;}
+.pet{width:80px;height:80px;background:#0f2547;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:white;cursor:pointer;transition:0.3s;}
+.pet img{width:50px;height:50px;}
+.pet:hover{transform:scale(1.1);}
+#shop{margin-top:30px;}
+.shopItem{padding:10px 15px;margin:5px;background:#0f2547;border-radius:8px;cursor:pointer;display:inline-block;transition:0.3s;}
+.shopItem:hover{background:#1c3f6e;}
 </style>
 </head>
 <body>
-<h2 style="color:#3da9ff;">Click Challenge</h2>
-<div id="score">0</div>
-<button id="clickBtn">CLICK ME!</button>
+
+<h2>BlueNova Pet Clicker</h2>
+<div id="scoreboard">Points: 0</div>
+<div id="level">Level: 1</div>
+<button id="mainBtn">Click!</button>
+
+<div id="pets">
+  <!-- Pets appear here -->
+</div>
+
+<h3 style="color:#3da9ff;">Shop</h3>
+<div id="shop">
+  <div class="shopItem" onclick="buyPet('cat',100)">🐱 Cat - 100 pts</div>
+  <div class="shopItem" onclick="buyPet('dog',500)">🐶 Dog - 500 pts</div>
+  <div class="shopItem" onclick="buyPet('dragon',2000)">🐉 Dragon - 2000 pts</div>
+</div>
 
 <script>
 let score=0;
-const scoreDiv=document.getElementById("score");
-document.getElementById("clickBtn").onclick = ()=>{score++; scoreDiv.innerText=score;}
+let level=1;
+let pointsToLevel=500;
+let pets=[];
+
+const scoreboard=document.getElementById("scoreboard");
+const levelDiv=document.getElementById("level");
+const petsDiv=document.getElementById("pets");
+
+function updateScore(){
+  scoreboard.innerText="Points: "+Math.floor(score);
+  levelDiv.innerText="Level: "+level;
+}
+
+function gainPoints(amount){
+  score+=amount;
+  // Level up check
+  if(score>=pointsToLevel){
+    level++;
+    pointsToLevel+=level*500;
+    alert("Level Up! You reached Level "+level);
+  }
+  updateScore();
+}
+
+// Main button click
+document.getElementById("mainBtn").onclick=function(){
+  gainPoints(1);
+  this.style.transform="scale(1.1)";
+  setTimeout(()=>{this.style.transform="scale(1)";},100);
+}
+
+// Buy pet
+function buyPet(type,cost){
+  if(score<cost) return alert("Not enough points!");
+  score-=cost;
+  updateScore();
+  let petDiv=document.createElement("div");
+  petDiv.className="pet";
+  petDiv.innerHTML=`${type=="cat"?"🐱":type=="dog"?"🐶":"🐉"}<br>${type}`;
+  petsDiv.appendChild(petDiv);
+
+  let gain=type=="cat"?0.2:type=="dog"?1:5;
+
+  // Automatic points generation
+  setInterval(()=>{
+    gainPoints(gain);
+    // Animate pet
+    petDiv.style.transform="scale(1.2)";
+    setTimeout(()=>{petDiv.style.transform="scale(1)";},200);
+  },1000);
+}
 </script>
+
 </body>
 </html>
