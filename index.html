@@ -3,77 +3,202 @@
 <head>
 <meta charset="UTF-8">
 <title>BlueNova Arcade</title>
+
 <style>
-body{margin:0;font-family:Arial;background:#050b15;color:white;}
-header{padding:15px;text-align:center;font-size:28px;background:#081a33;color:#3da9ff;}
-nav{display:flex;justify-content:center;gap:10px;padding:10px;background:#071425;flex-wrap:wrap;}
-nav button{background:#0f2547;border:none;color:white;padding:10px 16px;border-radius:8px;cursor:pointer;}
+body{
+margin:0;
+font-family:Arial;
+background:#050b15;
+color:white;
+}
+
+header{
+padding:15px;
+text-align:center;
+font-size:28px;
+background:#081a33;
+color:#3da9ff;
+}
+
+nav{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:10px;
+background:#071425;
+flex-wrap:wrap;
+}
+
+nav button{
+background:#0f2547;
+border:none;
+color:white;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+}
+
 nav button.active{background:#1c3f6e;}
-.section{display:none;}
+
+.section{display:none;height:calc(100vh - 160px);}
 .section.active{display:block;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;padding:15px;}
-.grid button{padding:12px;border-radius:8px;background:#0f2547;border:none;color:white;cursor:pointer;font-size:16px;text-align:left;transition:0.2s;}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:10px;
+padding:15px;
+overflow:auto;
+}
+
+.grid button{
+padding:12px;
+border-radius:8px;
+background:#0f2547;
+border:none;
+color:white;
+cursor:pointer;
+font-size:15px;
+text-align:left;
+}
+
 .grid button:hover{background:#1c3f6e;}
-iframe{width:100%;height:70vh;border:none;background:black;}
-footer{text-align:center;padding:10px;color:#3da9ff;}
+
+iframe{
+width:100%;
+height:calc(100% - 45px);
+border:none;
+background:black;
+}
+
+#fullscreenBtn{
+padding:8px 15px;
+margin:5px;
+border:none;
+border-radius:6px;
+background:#0f2547;
+color:white;
+cursor:pointer;
+}
+
+#fullscreenBtn:hover{background:#1c3f6e;}
+
+footer{
+text-align:center;
+padding:10px;
+color:#3da9ff;
+}
+
+#lock{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#050b15;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+#lock input{
+padding:10px;
+border-radius:6px;
+border:none;
+margin:10px;
+font-size:16px;
+}
+
+#lock button{
+padding:10px 20px;
+border:none;
+border-radius:6px;
+background:#0f2547;
+color:white;
+cursor:pointer;
+}
+
+#lock p{
+color:#3da9ff;
+font-size:14px;
+text-align:center;
+max-width:300px;
+}
 </style>
 </head>
+
 <body>
+
+<!-- PASSCODE -->
+<div id="lock">
+<h2>🔒 BlueNova Arcade</h2>
+<input id="pass" type="password" placeholder="Enter Passcode">
+<button onclick="unlock()">Enter</button>
+<p>No passcode? Join the Discord server — the passcode is posted there.</p>
+</div>
 
 <header>🚀 BlueNova Arcade</header>
 
 <nav>
-  <button id="gbtn" class="active" onclick="tab('games')">Games</button>
-  <button id="fbtn" onclick="tab('follow')">Follow Me</button>
-  <button id="bbtn" onclick="tab('browser')">Browser</button>
-  <button id="tbtn" onclick="tab('thirdparty')">3rd Party</button>
+<button id="gbtn" class="active" onclick="tab('games')">Games</button>
+<button id="fbtn" onclick="tab('follow')">Follow</button>
+<button id="bbtn" onclick="tab('browser')">Browser</button>
+<button id="tbtn" onclick="tab('third')">3rd Party</button>
 </nav>
 
-<!-- GAMES TAB -->
+<!-- GAMES -->
 <div id="games" class="section active">
-  <div class="grid">
-    <button data-game="tictactoe.html">🎮 Tic Tac Toe vs AI</button>
-    <button data-game="snake.html">🐍 Snake</button>
-    <button data-game="clicker.html">⚡ Pet Clicker</button>
-    <button data-game="memory.html">🧠 Memory</button>
-    <button data-game="connect4.html">🔴 Connect 4 vs AI</button>
-    <button data-game="pong.html">🏓 Pong</button>
-    <button data-game="maze.html">🧩 Maze</button>
-    <button data-game="mini2048.html">🔢 Mini 2048</button>
-    <button data-game="flappybird.html">🐦 Flappy Bird</button>
-  </div>
-  <iframe id="gamePlayer" src=""></iframe>
+
+<div class="grid">
+<button data-game="tictactoe.html">🎮 Tic Tac Toe</button>
+<button data-game="snake.html">🐍 Snake</button>
+<button data-game="clicker.html">⚡ Pet Clicker</button>
+<button data-game="memory.html">🧠 Memory</button>
+<button data-game="connect4.html">🔴 Connect 4</button>
+<button data-game="pong.html">🏓 Pong</button>
+<button data-game="maze.html">🧩 Maze</button>
+<button data-game="mini2048.html">🔢 2048</button>
+<button data-game="flappybird.html">🐦 Flappy Bird</button>
 </div>
 
-<!-- FOLLOW ME TAB -->
+<button id="fullscreenBtn" onclick="fs(gameFrame)">Fullscreen</button>
+<iframe id="gameFrame"></iframe>
+
+</div>
+
+<!-- FOLLOW -->
 <div id="follow" class="section">
-  <div class="grid">
-    <button onclick="openLink('https://snapchat.com/t/yQxnxb4r')">👻 Snapchat</button>
-    <button onclick="openLink('https://www.tiktok.com/@nxtcoreee3')">🎵 TikTok</button>
-    <button onclick="openLink('https://www.instagram.com/nxtcoreee3')">📸 Instagram</button>
-    <button onclick="openLink('https://discord.gg/8HSrr57nKQ')">💬 Discord</button>
-    <button onclick="openLink('https://x.com/xnxtcoreee3')">🐦 X (Twitter)</button>
-    <button onclick="openLink('https://t.me/nxtnxxt')">✈️ Telegram</button>
-    <button onclick="openLink('https://github.com/nxtcoreee3')">💻 GitHub</button>
-    <button onclick="openLink('https://usemixy.com/@nxtcoreee3')">🎧 Mixy</button>
-  </div>
+<div class="grid">
+<button onclick="openLink('https://discord.gg/8HSrr57nKQ')">💬 Discord</button>
+<button onclick="openLink('https://www.tiktok.com/@nxtcoreee3')">🎵 TikTok</button>
+<button onclick="openLink('https://www.instagram.com/nxtcoreee3')">📸 Instagram</button>
+<button onclick="openLink('https://snapchat.com/t/yQxnxb4r')">👻 Snapchat</button>
+<button onclick="openLink('https://x.com/xnxtcoreee3')">🐦 X</button>
+<button onclick="openLink('https://t.me/nxtnxxt')">✈ Telegram</button>
+<button onclick="openLink('https://github.com/nxtcoreee3')">💻 GitHub</button>
+<button onclick="openLink('https://usemixy.com/@nxtcoreee3')">🎧 Mixy</button>
+</div>
 </div>
 
-<!-- BROWSER TAB -->
+<!-- BROWSER -->
 <div id="browser" class="section">
-  <iframe id="browserFrame" src="games/browser.html"></iframe>
+<button id="fullscreenBtn" onclick="fs(browserFrame)">Fullscreen Browser</button>
+<iframe id="browserFrame" src="games/browser.html"></iframe>
 </div>
 
-<!-- THIRD-PARTY TAB -->
-<div id="thirdparty" class="section">
-  <div class="grid">
-    <div style="grid-column:1/-1;color:#3da9ff;font-weight:bold;margin-bottom:10px;">⚠️ Disclaimer: External websites are not hosted by BlueNova Arcade. Use at your own discretion.</div>
-    <button onclick="openLink('https://spelo.se')">🎮 Spelo.se - Various fun arcade & puzzle games</button>
-    <button onclick="openLink('https://poki.com')">🎲 Poki.com - Casual, skill & multiplayer games</button>
-    <button onclick="openLink('https://newgrounds.com')">💥 Newgrounds - Indie & classic browser games</button>
-    <button onclick="openLink('https://kongregate.com')">🏆 Kongregate - Free games & leaderboards</button>
-  </div>
-  <div style="margin-top:15px;font-size:14px;color:#aaa;">Credits to the websites listed above for their games.</div>
+<!-- THIRD PARTY -->
+<div id="third" class="section">
+<div class="grid">
+<div style="grid-column:1/-1;color:#3da9ff;">
+External sites — not hosted by BlueNova.
+</div>
+<button onclick="openLink('https://poki.com')">Poki – casual games</button>
+<button onclick="openLink('https://spelo.se')">Spelo – arcade games</button>
+<button onclick="openLink('https://kongregate.com')">Kongregate – indie games</button>
+<button onclick="openLink('https://newgrounds.com')">Newgrounds – classics</button>
+</div>
 </div>
 
 <footer>
@@ -82,29 +207,32 @@ Credits: nxtcoreee3
 </footer>
 
 <script>
-// Tab system
-function tab(name){
-  ['games','follow','browser','thirdparty'].forEach(id=>{
-    document.getElementById(id).classList.remove('active');
-    document.getElementById(id[0]+'btn').classList.remove('active');
-  });
-  document.getElementById(name).classList.add('active');
-  document.getElementById(name[0]+'btn').classList.add('active');
+
+const PASS="tweakbre4k";
+
+function unlock(){
+if(document.getElementById("pass").value===PASS){
+document.getElementById("lock").style.display="none";
+}else alert("Wrong passcode.");
 }
 
-// Open link in new tab
-function openLink(url){window.open(url,"_blank");}
-
-// Load game in iframe
-function loadGame(path){
-  const iframe = document.getElementById("gamePlayer");
-  iframe.src = "games/"+path;
-}
-
-// Attach click events to game buttons
-document.querySelectorAll('#games .grid button').forEach(btn=>{
-  btn.addEventListener('click',()=>loadGame(btn.dataset.game));
+function tab(n){
+["games","follow","browser","third"].forEach(x=>{
+document.getElementById(x).classList.remove("active");
 });
+document.getElementById(n).classList.add("active");
+}
+
+function openLink(u){window.open(u,"_blank");}
+
+document.querySelectorAll("[data-game]").forEach(b=>{
+b.onclick=()=>gameFrame.src="games/"+b.dataset.game;
+});
+
+function fs(el){
+if(el.requestFullscreen) el.requestFullscreen();
+}
+
 </script>
 
 </body>
