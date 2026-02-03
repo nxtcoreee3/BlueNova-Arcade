@@ -1,40 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Memory Game</title>
+<title>BlueNova Memory</title>
 <style>
-body{background:black;color:white;text-align:center;font-family:Arial;}
-.grid{display:grid;grid-template-columns:repeat(4,80px);grid-gap:10px;justify-content:center;margin-top:20px;}
-.card{width:80px;height:80px;background:#153458;display:flex;align-items:center;justify-content:center;font-size:36px;border-radius:8px;cursor:pointer;}
-.card.flipped{background:#3da9ff;color:black;}
+body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;}
+h2{color:#3da9ff;margin:15px;}
+#board{display:grid;grid-template-columns:repeat(4,80px);gap:10px;margin:20px auto;}
+.card{width:80px;height:80px;background:#0f2547;border-radius:8px;cursor:pointer;font-size:40px;display:flex;align-items:center;justify-content:center;transition:0.3s;}
+.card.flipped{background:#3da9ff;}
+#info{margin-top:10px;}
+#reset{margin-top:10px;padding:8px 15px;background:#0f2547;border:none;border-radius:6px;color:white;cursor:pointer;}
+#reset:hover{background:#1c3f6e;}
 </style>
 </head>
 <body>
-<h2 style="color:#3da9ff;">Memory Game</h2>
-<div class="grid" id="grid"></div>
-
+<h2>BlueNova Memory</h2>
+<div id="board"></div>
+<div id="info">Matches: 0</div>
+<button id="reset">Restart</button>
 <script>
-const grid=document.getElementById("grid");
-let arr=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8].sort(()=>Math.random()-0.5);
-let first=null;
-
-arr.forEach(n=>{
-const card=document.createElement("div");
-card.className="card";
-card.addEventListener("click",()=>{
-if(card.classList.contains("flipped")) return;
-card.innerText=n;
-card.classList.add("flipped");
-if(!first){first=card;}else{
-if(first.innerText!==card.innerText){
-setTimeout(()=>{first.innerText="";first.classList.remove("flipped");card.innerText="";card.classList.remove("flipped");},600);
-}
-first=null;
-}
-});
-grid.appendChild(card);
-});
+let boardDiv=document.getElementById("board"),cards=[],flipped=[],matches=0;
+const symbols=["🍎","🍌","🍒","🍇","🍉","🥝","🍍","🍑"];
+function init(){let arr=[...symbols,...symbols];arr.sort(()=>0.5-Math.random());boardDiv.innerHTML="";cards=[];matches=0;updateInfo();for(let s of arr){let c=document.createElement("div");c.className="card";c.innerText="";c.dataset.symbol=s;c.onclick=flipCard;boardDiv.appendChild(c);cards.push(c);}}
+function flipCard(){if(this.classList.contains("flipped")||flipped.length==2) return; this.classList.add("flipped"); this.innerText=this.dataset.symbol; flipped.push(this); if(flipped.length==2){setTimeout(checkMatch,500);}}
+function checkMatch(){if(flipped[0].dataset.symbol==flipped[1].dataset.symbol){matches++;} else{flipped[0].classList.remove("flipped");flipped[0].innerText="";flipped[1].classList.remove("flipped");flipped[1].innerText="";}flipped=[];updateInfo();}
+function updateInfo(){document.getElementById("info").innerText="Matches: "+matches;}
+document.getElementById("reset").onclick=init;init();
 </script>
 </body>
 </html>
