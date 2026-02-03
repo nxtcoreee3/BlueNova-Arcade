@@ -31,5 +31,4 @@ Created by nxtcoreee3
 
 # ⚠️ Disclaimer
 
-All games are embedded from publicly available sites.
 This project is intended for personal and educational use only.
