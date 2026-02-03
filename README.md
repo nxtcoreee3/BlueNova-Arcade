@@ -18,16 +18,9 @@ This project is designed to be simple, fast, and easy to customize.
 
 ⸻
 
-# 🧩 Customization
-
-To add games, edit this section in index.html:
-
-const games = [
-
-Add entries like:
-
-["Game Name","https://example.com"],
-
+# 🧑🏻‍💻 Open in browser
+[
+](https://nxtcoreee3.github.io/BlueNova-Arcade/)
 
 ⸻
 
