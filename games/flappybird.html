@@ -1,57 +1,80 @@
-<!DOCTYPE html>
-<html>
+// flappybird.html
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BlueNova Flappy Bird</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Flappy Bird</title>
 <style>
-body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;}
-h2{color:#3da9ff;margin:15px;}
-canvas{border:2px solid #3da9ff;display:block;margin:0 auto;}
+  :root{--glass:rgba(255,255,255,.2);--shadow:rgba(0,0,0,.35);}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(circle at 20% 10%, #e9feff 0%, #9befff 30%, #5cc9ff 60%, #2b84ff 100%);
+    font-family:"Trebuchet MS","Segoe UI",sans-serif;color:#e9f7ff;display:flex;align-items:center;justify-content:center;}
+  .panel{width:min(520px,94vw);padding:14px;border-radius:22px;background:var(--glass);
+    backdrop-filter:blur(14px);box-shadow:0 18px 40px var(--shadow);}
+  canvas{width:100%;height:auto;border-radius:18px;background:rgba(0,0,0,.2);}
+  .row{display:flex;justify-content:center;margin-top:8px;}
+  .btn{min-height:48px;padding:10px 14px;border-radius:18px;border:none;color:#07304f;
+    background:linear-gradient(#fff,#b8f6ff,#5bc9ff);box-shadow:0 8px 16px rgba(0,0,0,.25);font-weight:700;}
 </style>
 </head>
 <body>
-<h2>BlueNova Flappy Bird</h2>
-<canvas id="c" width="400" height="600"></canvas>
+<div class="panel">
+  <canvas id="c" width="420" height="300"></canvas>
+  <div class="row"><button class="btn" id="restart">Restart</button></div>
+</div>
 <script>
-const c=document.getElementById("c"),ctx=c.getContext("2d");
-let bird={x:50,y:300,vy:0},gravity=0.5,jump=-10,pipes=[],frame=0,score=0;
+document.addEventListener('DOMContentLoaded',()=>{
+  const c=document.getElementById('c'); const ctx=c.getContext('2d');
+  let bird={y:150,vy:0}; let pipes=[]; let score=0;
+  const high=Number(localStorage.getItem('flapHigh')||0);
 
-document.addEventListener("keydown",()=>{bird.vy=jump;});
-document.addEventListener("touchstart",()=>{bird.vy=jump;});
-
-function loop(){
-  ctx.fillStyle="black"; ctx.fillRect(0,0,400,600);
-  // bird
-  bird.vy+=gravity; bird.y+=bird.vy;
-  ctx.fillStyle="#3da9ff"; ctx.fillRect(bird.x,bird.y,30,30);
-  
-  // pipes
-  if(frame%100===0){
-    let h=Math.random()*200+100;
-    pipes.push({x:400,y:h});
+  function reset(){
+    bird={y:150,vy:0}; pipes=[]; score=0;
   }
-  pipes.forEach((p,i)=>{
-    p.x-=2;
-    ctx.fillStyle="green";
-    ctx.fillRect(p.x,0,50,p.y);
-    ctx.fillRect(p.x,p.y+150,50,600);
-    if(p.x+50<0)pipes.splice(i,1);
-    // collision
-    if(bird.x< p.x+50 && bird.x+30>p.x && (bird.y<p.y || bird.y+30>p.y+150)){reset(); return;}
-  });
-  
-  // floor/ceiling
-  if(bird.y<0 || bird.y>570) reset();
-  
-  ctx.fillStyle="white"; ctx.font="20px Arial"; ctx.fillText("Score: "+score,10,30);
-  
-  // score
-  pipes.forEach(p=>{if(!p.passed && p.x+50<bird.x){score++; p.passed=true;}});
-  frame++;
+  function addPipe(){
+    const gap=90; const top=Math.random()*120+40;
+    pipes.push({x:420,top, gap});
+  }
+  let last=performance.now(); let acc=0;
+  function loop(t){
+    const dt=(t-last)/1000; last=t;
+    acc+=dt;
+    if(acc>2){addPipe(); acc=0;}
+    bird.vy+=400*dt; bird.y+=bird.vy*dt;
+    pipes.forEach(p=>p.x-=140*dt);
+    pipes=pipes.filter(p=>p.x>-40);
+
+    // collisions
+    if(bird.y<0||bird.y>300) reset();
+    pipes.forEach(p=>{
+      if(p.x<60&&p.x>20){
+        if(bird.y<p.top||bird.y>p.top+p.gap){reset();}
+        else score++;
+      }
+    });
+
+    // draw
+    ctx.clearRect(0,0,420,300);
+    // parallax
+    ctx.fillStyle='rgba(120,220,255,0.15)';
+    ctx.fillRect(0,0,420,300);
+    ctx.fillStyle='#7fefff';
+    pipes.forEach(p=>{
+      ctx.fillRect(p.x,0,30,p.top);
+      ctx.fillRect(p.x,p.top+p.gap,30,300-(p.top+p.gap));
+    });
+    ctx.fillStyle='#ffd84f'; ctx.beginPath(); ctx.arc(40,bird.y,10,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.fillText('Score: '+score,10,20);
+    ctx.fillText('High: '+Math.max(high,score),320,20);
+    requestAnimationFrame(loop);
+  }
   requestAnimationFrame(loop);
-}
-function reset(){bird={x:50,y:300,vy:0};pipes=[];score=0;}
-loop();
+
+  c.addEventListener('pointerdown',()=>{bird.vy=-180;});
+  document.getElementById('restart').addEventListener('pointerdown',reset);
+  window.addEventListener('beforeunload',()=>localStorage.setItem('flapHigh',Math.max(high,score)));
+});
 </script>
 </body>
 </html>
