@@ -1,109 +1,89 @@
-<!DOCTYPE html>
+// clicker.html
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BlueNova Pet Clicker</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Pet Clicker</title>
 <style>
-body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;}
-h2{color:#3da9ff;margin:15px;}
-#score{font-size:24px;margin:10px;}
-#clickBtn{padding:20px 40px;margin:10px;font-size:24px;background:#0f2547;border:none;color:white;border-radius:10px;cursor:pointer;transition:0.2s;}
-#clickBtn:hover{background:#1c3f6e;}
-.pet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;padding:10px;}
-.pet{background:#0f2547;border-radius:10px;padding:10px;cursor:pointer;transition:0.2s;position:relative;}
-.pet:hover{background:#1c3f6e;}
-.pet-name{margin-top:5px;font-weight:bold;}
-.pet-info{font-size:14px;margin-top:3px;}
-.floating{position:absolute;color:#3da9ff;font-weight:bold;animation:floatUp 1s ease-out;}
-@keyframes floatUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-30px);}}
+  :root{--glass:rgba(255,255,255,.2);--shadow:rgba(0,0,0,.35);}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(circle at 20% 10%, #e9feff 0%, #9befff 30%, #5cc9ff 60%, #2b84ff 100%);
+    font-family:"Trebuchet MS","Segoe UI",sans-serif;color:#e9f7ff;display:flex;align-items:center;justify-content:center;}
+  .panel{width:min(680px,95vw);padding:14px;border-radius:22px;background:var(--glass);
+    backdrop-filter:blur(14px);box-shadow:0 18px 40px var(--shadow);}
+  h1{text-align:center;margin:0 0 6px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:8px 0;}
+  .btn{min-height:48px;padding:10px 14px;border-radius:18px;border:none;color:#07304f;
+    background:linear-gradient(#fff,#b8f6ff,#5bc9ff);box-shadow:0 8px 16px rgba(0,0,0,.25);font-weight:700;}
+  .stats{display:flex;justify-content:space-around;font-size:14px;}
+  .shop{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
+  .card{background:rgba(255,255,255,.25);border-radius:16px;padding:10px;box-shadow:0 8px 16px rgba(0,0,0,.25);}
+  .pet{font-size:28px;text-align:center;}
 </style>
 </head>
 <body>
-<h2>BlueNova Pet Clicker</h2>
-<div id="score">Score: 0</div>
-<button id="clickBtn">Click Me!</button>
+<div class="panel">
+  <h1>Pet Clicker</h1>
+  <div class="stats">
+    <div>Coins: <span id="coins">0</span></div>
+    <div>Level: <span id="level">1</span></div>
+    <div>Per Click: <span id="perClick">1</span></div>
+    <div>Passive: <span id="pps">0</span>/s</div>
+  </div>
+  <div class="row"><button class="btn" id="clickBtn">Pet!</button></div>
 
-<div class="pet-grid" id="petGrid"></div>
-
+  <div class="shop" id="shop"></div>
+</div>
 <script>
-// Game state
-let score = 0;
-
-// Start with 0 pets
-const allPets = [
-  {name:"Dog",icon:"🐶",cps:1,price:10,xp:0,level:1,owned:false},
-  {name:"Cat",icon:"🐱",cps:2,price:50,xp:0,level:1,owned:false},
-  {name:"Bunny",icon:"🐰",cps:3,price:150,xp:0,level:1,owned:false},
-  {name:"Fox",icon:"🦊",cps:5,price:500,xp:0,level:1,owned:false},
-  {name:"Bear",icon:"🐻",cps:10,price:1000,xp:0,level:1,owned:false},
-  {name:"Dragon",icon:"🐉",cps:25,price:5000,xp:0,level:1,owned:false},
-];
-
-const petGrid = document.getElementById("petGrid");
-
-function renderPets(){
-  petGrid.innerHTML = "";
-  allPets.forEach((pet,i)=>{
-    const div = document.createElement("div");
-    div.className = "pet";
-    div.dataset.index = i;
-    let info = pet.owned ? `CPS: ${pet.cps} | Level: ${pet.level}` : `Price: ${pet.price}`;
-    div.innerHTML = `<div class="pet-icon">${pet.icon}</div>
-                     <div class="pet-name">${pet.name}</div>
-                     <div class="pet-info">${info}</div>`;
-    div.onclick = () => buyOrUpgrade(i,div);
-    petGrid.appendChild(div);
-  });
-}
-
-// Buy or upgrade pet (prevent going negative)
-function buyOrUpgrade(i,div){
-  const pet = allPets[i];
-  if(!pet.owned && score >= pet.price){
-    score -= pet.price;
-    pet.owned = true;
-    showFloating("Purchased!",div);
-  } else if(pet.owned && score >= Math.floor(pet.price/2)){
-    score -= Math.floor(pet.price/2);
-    pet.level++;
-    pet.cps = Math.floor(pet.cps*1.5);
-    showFloating(`Level ${pet.level}!`,div);
+document.addEventListener('DOMContentLoaded',()=>{
+  const shopEl=document.getElementById('shop');
+  const state=JSON.parse(localStorage.getItem('petSave')||'{"coins":0,"perClick":1,"level":1,"pets":{"cat":0,"dog":0,"bird":0,"fox":0}}');
+  const petData={
+    cat:{emoji:'🐱',cost:10,pps:1},
+    dog:{emoji:'🐶',cost:25,pps:2},
+    bird:{emoji:'🐦',cost:50,pps:4},
+    fox:{emoji:'🦊',cost:100,pps:8}
+  };
+  function totalPps(){return Object.keys(petData).reduce((t,k)=>t+petData[k].pps*state.pets[k],0);}
+  function updateUI(){
+    document.getElementById('coins').textContent=Math.floor(state.coins);
+    document.getElementById('perClick').textContent=state.perClick;
+    document.getElementById('level').textContent=state.level;
+    document.getElementById('pps').textContent=totalPps();
+    shopEl.innerHTML='';
+    Object.keys(petData).forEach(k=>{
+      const d=petData[k];
+      const cost=Math.floor(d.cost*Math.pow(1.15,state.pets[k]));
+      const card=document.createElement('div');
+      card.className='card';
+      card.innerHTML=`<div class="pet">${d.emoji}</div>
+        <div>${k.toUpperCase()} x${state.pets[k]}</div>
+        <div>+${d.pps}/s</div>
+        <button class="btn">Buy (${cost})</button>`;
+      card.querySelector('button').addEventListener('pointerdown',()=>{
+        if(state.coins>=cost){
+          state.coins-=cost; state.pets[k]++; state.level=1+Math.floor(totalPps()/10);
+          updateUI(); save();
+        }
+      });
+      shopEl.appendChild(card);
+    });
   }
-  updateScore();
-  renderPets();
-}
-
-// Floating animation
-function showFloating(text,el){
-  const f = document.createElement("div");
-  f.className="floating";
-  f.innerText=text;
-  el.appendChild(f);
-  setTimeout(()=>el.removeChild(f),1000);
-}
-
-// Update score display
-function updateScore(){
-  document.getElementById("score").innerText = "Score: "+score;
-}
-
-// Click button
-document.getElementById("clickBtn").onclick = ()=>{
-  score++;
-  updateScore();
-  showFloating("+1",document.getElementById("clickBtn"));
-}
-
-// Auto clicks from owned pets
-setInterval(()=>{
-  allPets.forEach(p=>{
-    if(p.owned) score += p.cps;
+  function save(){localStorage.setItem('petSave',JSON.stringify(state));}
+  document.getElementById('clickBtn').addEventListener('pointerdown',()=>{
+    state.coins+=state.perClick; updateUI(); save();
   });
-  updateScore();
-},1000);
 
-// Initial render
-renderPets();
+  let last=performance.now();
+  function loop(t){
+    const dt=(t-last)/1000; last=t;
+    state.coins+=totalPps()*dt;
+    updateUI();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+});
 </script>
 </body>
 </html>
