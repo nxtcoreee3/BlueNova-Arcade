@@ -1,60 +1,126 @@
-<!DOCTYPE html>
-<html>
+// snake.html
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BlueNova Snake</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Snake</title>
 <style>
-body{margin:0;background:#050b15;display:flex;flex-direction:column;align-items:center;font-family:Arial;color:white;}
-h2{color:#3da9ff;margin:15px;}
-canvas{border:2px solid #3da9ff;margin-top:10px;}
-#controls{display:none;margin-top:10px;}
-button{padding:10px 15px;margin:2px;background:#0f2547;color:white;border:none;border-radius:5px;font-size:18px;cursor:pointer;}
-button:hover{background:#1c3f6e;}
-@media(max-width:768px){#controls{display:flex;gap:5px;}}
+  :root{--glass:rgba(255,255,255,.2);--shadow:rgba(0,0,0,.35);}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(circle at 20% 10%, #e9feff 0%, #9befff 30%, #5cc9ff 60%, #2b84ff 100%);
+    font-family:"Trebuchet MS","Segoe UI",sans-serif;color:#e9f7ff;display:flex;align-items:center;justify-content:center;}
+  .panel{width:min(560px,94vw);padding:14px;border-radius:22px;background:var(--glass);
+    backdrop-filter:blur(14px);box-shadow:0 18px 40px var(--shadow);}
+  canvas{width:100%;height:auto;border-radius:18px;background:rgba(0,0,0,.2);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0;}
+  .btn{min-height:48px;padding:10px 14px;border-radius:18px;border:none;color:#07304f;
+    background:linear-gradient(#fff,#b8f6ff,#5bc9ff);box-shadow:0 8px 16px rgba(0,0,0,.25);font-weight:700;}
+  .hud{display:flex;justify-content:space-between;font-size:14px;}
+  .joy{width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.2);
+    margin:10px auto;position:relative;touch-action:none;}
+  .stick{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.7);
+    position:absolute;left:40px;top:40px;box-shadow:0 8px 16px rgba(0,0,0,.25);}
 </style>
 </head>
 <body>
-<h2>BlueNova Snake</h2>
-<canvas id="c" width="400" height="400"></canvas>
-<div id="controls">
-  <button onclick="setDir(0,-10)">↑</button><br>
-  <button onclick="setDir(-10,0)">←</button>
-  <button onclick="setDir(10,0)">→</button><br>
-  <button onclick="setDir(0,10)">↓</button>
+<div class="panel">
+  <div class="hud"><div>Score: <span id="score">0</span></div><div>High: <span id="high">0</span></div></div>
+  <canvas id="game" width="400" height="400"></canvas>
+  <div class="joy" id="joy"><div class="stick" id="stick"></div></div>
+  <div class="row"><button class="btn" id="restart">Restart</button></div>
 </div>
-
 <script>
-const c=document.getElementById("c"),ctx=c.getContext("2d");
-let snake=[[20,20]],dir=[10,0],fruit=[200,200],score=0;
-document.addEventListener("keydown", e=>{
-  if(e.key=="ArrowUp") dir=[0,-10];
-  if(e.key=="ArrowDown") dir=[0,10];
-  if(e.key=="ArrowLeft") dir=[-10,0];
-  if(e.key=="ArrowRight") dir=[10,0];
-});
-function setDir(x,y){dir=[x,y];}
+document.addEventListener('DOMContentLoaded',()=>{
+  const canvas=document.getElementById('game');
+  const ctx=canvas.getContext('2d');
+  const scoreEl=document.getElementById('score');
+  const highEl=document.getElementById('high');
+  const high=Number(localStorage.getItem('snakeHigh')||0); highEl.textContent=high;
 
-function draw(){
-  ctx.fillStyle="black"; ctx.fillRect(0,0,400,400);
-  snake.forEach((s,i)=>{
-    ctx.fillStyle=i===0?"#3da9ff":"lime";
-    ctx.fillRect(s[0],s[1],10,10);
+  const size=20;
+  let snake=[{x:10,y:10}];
+  let dir={x:1,y:0};
+  let food={x:15,y:15};
+  let power={x:5,y:5,active:false};
+  let score=0, speed=6, time=0, alive=true;
+
+  function placeFood(){
+    food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};
+  }
+  function placePower(){
+    power={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20),active:true};
+  }
+
+  function step(dt){
+    time+=dt;
+    const stepTime=1/speed;
+    while(time>stepTime){
+      time-=stepTime;
+      const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+      if(head.x<0||head.y<0||head.x>=20||head.y>=20||snake.some(s=>s.x===head.x&&s.y===head.y)){
+        alive=false; return;
+      }
+      snake.unshift(head);
+      if(head.x===food.x&&head.y===food.y){
+        score+=10; speed=Math.min(12,speed+0.5); placeFood();
+        if(score%50===0) placePower();
+      }else{
+        snake.pop();
+      }
+      if(power.active && head.x===power.x && head.y===power.y){
+        score+=30; power.active=false;
+      }
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,400,400);
+    ctx.fillStyle='rgba(0,0,0,0.2)'; ctx.fillRect(0,0,400,400);
+    ctx.fillStyle='#7fefff';
+    snake.forEach((s,i)=>{ctx.fillStyle=i? '#5bc9ff':'#b8f6ff';ctx.fillRect(s.x*size,s.y*size,size-2,size-2);});
+    ctx.fillStyle='#f3ff7f'; ctx.fillRect(food.x*size,food.y*size,size-2,size-2);
+    if(power.active){ctx.fillStyle='#7fff9a';ctx.fillRect(power.x*size,power.y*size,size-2,size-2);}
+  }
+
+  let last=performance.now();
+  function loop(t){
+    const dt=(t-last)/1000; last=t;
+    if(alive) step(dt);
+    draw();
+    scoreEl.textContent=score;
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  document.getElementById('restart').addEventListener('pointerdown',()=>{
+    snake=[{x:10,y:10}];dir={x:1,y:0};score=0;speed=6;alive=true;placeFood();power.active=false;
   });
-  ctx.fillStyle="red"; ctx.fillRect(fruit[0],fruit[1],10,10);
-}
 
-function update(){
-  let head=[snake[0][0]+dir[0],snake[0][1]+dir[1]];
-  snake.unshift(head);
-  if(head[0]===fruit[0] && head[1]===fruit[1]){
-    score+=10;
-    fruit=[Math.floor(Math.random()*40)*10,Math.floor(Math.random()*40)*10];
-  }else snake.pop();
-  // collision with self
-  for(let i=1;i<snake.length;i++){if(snake[i][0]===head[0] && snake[i][1]===head[1]){alert("Game Over. Score: "+score); snake=[[20,20]]; dir=[10,0]; score=0;}}
-}
+  // Joystick
+  const joy=document.getElementById('joy');
+  const stick=document.getElementById('stick');
+  let dragging=false;
+  joy.addEventListener('pointerdown',(e)=>{dragging=true;joy.setPointerCapture(e.pointerId);});
+  joy.addEventListener('pointermove',(e)=>{
+    if(!dragging) return;
+    const r=joy.getBoundingClientRect();
+    const cx=r.width/2, cy=r.height/2;
+    const x=e.clientX-r.left-cx, y=e.clientY-r.top-cy;
+    const mag=Math.min(40,Math.hypot(x,y));
+    const ang=Math.atan2(y,x);
+    const sx=Math.cos(ang)*mag, sy=Math.sin(ang)*mag;
+    stick.style.left=(cx+sx-30)+'px';
+    stick.style.top=(cy+sy-30)+'px';
+    if(Math.abs(x)>Math.abs(y)) dir={x:x>0?1:-1,y:0}; else dir={x:0,y:y>0?1:-1};
+  });
+  joy.addEventListener('pointerup',()=>{dragging=false;stick.style.left='40px';stick.style.top='40px';});
 
-setInterval(()=>{update(); draw();},100);
+  window.addEventListener('beforeunload',()=>{
+    const highNow=Math.max(high,score);
+    localStorage.setItem('snakeHigh',highNow);
+  });
+});
 </script>
 </body>
 </html>
