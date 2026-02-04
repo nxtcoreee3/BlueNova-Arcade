@@ -1,30 +1,96 @@
-<!DOCTYPE html>
+// mini2048.html
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BlueNova 2048</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>2048</title>
 <style>
-body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;}
-h2{color:#3da9ff;margin:15px;}
-#grid{display:grid;grid-template-columns:repeat(4,80px);gap:5px;margin:20px auto;}
-.cell{width:80px;height:80px;background:#0f2547;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;transition:0.2s;}
-#score{margin-top:10px;}
+  :root{--glass:rgba(255,255,255,.2);--shadow:rgba(0,0,0,.35);}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(circle at 20% 10%, #e9feff 0%, #9befff 30%, #5cc9ff 60%, #2b84ff 100%);
+    font-family:"Trebuchet MS","Segoe UI",sans-serif;color:#e9f7ff;display:flex;align-items:center;justify-content:center;}
+  .panel{width:min(420px,92vw);padding:14px;border-radius:22px;background:var(--glass);
+    backdrop-filter:blur(14px);box-shadow:0 18px 40px var(--shadow);}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .tile{aspect-ratio:1;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:20px;
+    background:rgba(255,255,255,.25);transition:transform .12s;}
+  .row{display:flex;gap:10px;justify-content:center;margin:10px 0;}
+  .btn{min-height:48px;padding:10px 14px;border-radius:18px;border:none;color:#07304f;
+    background:linear-gradient(#fff,#b8f6ff,#5bc9ff);box-shadow:0 8px 16px rgba(0,0,0,.25);font-weight:700;}
 </style>
 </head>
 <body>
-<h2>BlueNova 2048</h2>
-<div id="grid"></div>
-<div id="score">Score: 0</div>
+<div class="panel">
+  <div class="row"><button class="btn" id="undo">Undo</button><button class="btn" id="reset">Reset</button></div>
+  <div class="grid" id="grid"></div>
+</div>
 <script>
-let grid=[],score=0,gridDiv=document.getElementById("grid");
-function init(){grid=Array(16).fill(0);gridDiv.innerHTML="";for(let i=0;i<16;i++){let d=document.createElement("div");d.className="cell";d.innerText="";gridDiv.appendChild(d);}addTile();addTile();update();}
-function addTile(){let empty=[];for(let i=0;i<16;i++)if(grid[i]==0)empty.push(i);if(empty.length){let idx=empty[Math.floor(Math.random()*empty.length)];grid[idx]=Math.random()<0.9?2:4;}}
-function update(){for(let i=0;i<16;i++){gridDiv.children[i].innerText=grid[i]?grid[i]:"";}document.getElementById("score").innerText="Score: "+score;}
-function move(dir){let moved=false; function slide(arr){let newArr=arr.filter(x=>x); for(let i=0;i<newArr.length-1;i++){if(newArr[i]==newArr[i+1]){newArr[i]*=2;score+=newArr[i];newArr[i+1]=0;}} newArr=newArr.filter(x=>x); while(newArr.length<4)newArr.push(0);return newArr;}
-for(let i=0;i<4;i++){let line=[];if(dir=="L"||dir=="R"){for(let j=0;j<4;j++)line.push(grid[i*4+j]); if(dir=="R")line.reverse(); let res=slide(line); if(dir=="R")res.reverse(); for(let j=0;j<4;j++){if(grid[i*4+j]!=res[j])moved=true;grid[i*4+j]=res[j];}}else{for(let j=0;j<4;j++)line.push(grid[j*4+i]); if(dir=="D")line.reverse(); let res=slide(line); if(dir=="D")res.reverse(); for(let j=0;j<4;j++){if(grid[j*4+i]!=res[j])moved=true;grid[j*4+i]=res[j];}}}
-if(moved)addTile();update();}
-document.addEventListener("keydown",e=>{if(e.key=="ArrowUp")move("U");if(e.key=="ArrowDown")move("D");if(e.key=="ArrowLeft")move("L");if(e.key=="ArrowRight")move("R");});
-init();
+document.addEventListener('DOMContentLoaded',()=>{
+  const gridEl=document.getElementById('grid');
+  let grid=JSON.parse(localStorage.getItem('g2048')||'[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]');
+  let prev=null;
+
+  function addTile(){
+    const empties=[];
+    grid.forEach((r,y)=>r.forEach((v,x)=>{if(!v)empties.push([x,y]);}));
+    if(!empties.length) return;
+    const [x,y]=empties[Math.floor(Math.random()*empties.length)];
+    grid[y][x]=Math.random()<0.9?2:4;
+  }
+
+  function render(){
+    gridEl.innerHTML='';
+    grid.flat().forEach(v=>{
+      const d=document.createElement('div');
+      d.className='tile'; d.textContent=v?String(v):'';
+      d.style.background=v?`rgba(120,220,255,${Math.min(1,0.2+Math.log2(v)/8)})`:'rgba(255,255,255,.2)';
+      gridEl.appendChild(d);
+    });
+    localStorage.setItem('g2048',JSON.stringify(grid));
+  }
+
+  function move(dir){
+    prev=JSON.parse(JSON.stringify(grid));
+    let moved=false;
+    for(let i=0;i<4;i++){
+      let line=[];
+      for(let j=0;j<4;j++){
+        const v=dir==='left'||dir==='right'?grid[i][j]:grid[j][i];
+        if(v) line.push(v);
+      }
+      if(dir==='right'||dir==='down') line.reverse();
+      for(let k=0;k<line.length-1;k++){
+        if(line[k]===line[k+1]){line[k]*=2; line[k+1]=0; moved=true;}
+      }
+      line=line.filter(v=>v);
+      while(line.length<4) line.push(0);
+      if(dir==='right'||dir==='down') line.reverse();
+      for(let j=0;j<4;j++){
+        const v=line[j];
+        if(dir==='left'||dir==='right'){if(grid[i][j]!==v)moved=true; grid[i][j]=v;}
+        else{if(grid[j][i]!==v)moved=true; grid[j][i]=v;}
+      }
+    }
+    if(moved){addTile(); render();}
+  }
+
+  function key(e){
+    const map={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'};
+    if(map[e.key]) move(map[e.key]);
+  }
+  window.addEventListener('keydown',key);
+
+  document.getElementById('undo').addEventListener('pointerdown',()=>{
+    if(prev){grid=prev; render();}
+  });
+  document.getElementById('reset').addEventListener('pointerdown',()=>{
+    grid=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; addTile(); addTile(); render();
+  });
+
+  if(!grid.flat().some(v=>v)){addTile(); addTile();}
+  render();
+});
 </script>
 </body>
 </html>
