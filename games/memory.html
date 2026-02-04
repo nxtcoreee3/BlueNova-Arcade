@@ -1,32 +1,102 @@
-<!DOCTYPE html>
+// memory.html
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BlueNova Memory</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Memory</title>
 <style>
-body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;}
-h2{color:#3da9ff;margin:15px;}
-#board{display:grid;grid-template-columns:repeat(4,80px);gap:10px;margin:20px auto;}
-.card{width:80px;height:80px;background:#0f2547;border-radius:8px;cursor:pointer;font-size:40px;display:flex;align-items:center;justify-content:center;transition:0.3s;}
-.card.flipped{background:#3da9ff;}
-#info{margin-top:10px;}
-#reset{margin-top:10px;padding:8px 15px;background:#0f2547;border:none;border-radius:6px;color:white;cursor:pointer;}
-#reset:hover{background:#1c3f6e;}
+  :root{--glass:rgba(255,255,255,.2);--shadow:rgba(0,0,0,.35);}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(circle at 20% 10%, #e9feff 0%, #9befff 30%, #5cc9ff 60%, #2b84ff 100%);
+    font-family:"Trebuchet MS","Segoe UI",sans-serif;color:#e9f7ff;display:flex;align-items:center;justify-content:center;}
+  .panel{width:min(640px,94vw);padding:14px;border-radius:22px;background:var(--glass);
+    backdrop-filter:blur(14px);box-shadow:0 18px 40px var(--shadow);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:8px 0;}
+  .btn{min-height:48px;padding:10px 14px;border-radius:18px;border:none;color:#07304f;
+    background:linear-gradient(#fff,#b8f6ff,#5bc9ff);box-shadow:0 8px 16px rgba(0,0,0,.25);font-weight:700;}
+  .grid{display:grid;gap:8px;}
+  .card{position:relative;aspect-ratio:1;border-radius:14px;transform-style:preserve-3d;transition:transform .35s;}
+  .face{position:absolute;inset:0;display:grid;place-items:center;border-radius:14px;backface-visibility:hidden;}
+  .front{background:rgba(255,255,255,.3);}
+  .back{transform:rotateY(180deg);background:rgba(255,255,255,.6);font-size:26px;}
+  .flipped{transform:rotateY(180deg);}
+  .hud{display:flex;justify-content:space-between;font-size:14px;}
 </style>
 </head>
 <body>
-<h2>BlueNova Memory</h2>
-<div id="board"></div>
-<div id="info">Matches: 0</div>
-<button id="reset">Restart</button>
+<div class="panel">
+  <div class="hud"><div>Time: <span id="time">0</span>s</div><div>Score: <span id="score">0</span></div></div>
+  <div class="row">
+    <select id="size" class="btn">
+      <option value="4">4x4</option>
+      <option value="5">5x4</option>
+      <option value="6">6x4</option>
+    </select>
+    <button class="btn" id="reset">Restart</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
 <script>
-let boardDiv=document.getElementById("board"),cards=[],flipped=[],matches=0;
-const symbols=["🍎","🍌","🍒","🍇","🍉","🥝","🍍","🍑"];
-function init(){let arr=[...symbols,...symbols];arr.sort(()=>0.5-Math.random());boardDiv.innerHTML="";cards=[];matches=0;updateInfo();for(let s of arr){let c=document.createElement("div");c.className="card";c.innerText="";c.dataset.symbol=s;c.onclick=flipCard;boardDiv.appendChild(c);cards.push(c);}}
-function flipCard(){if(this.classList.contains("flipped")||flipped.length==2) return; this.classList.add("flipped"); this.innerText=this.dataset.symbol; flipped.push(this); if(flipped.length==2){setTimeout(checkMatch,500);}}
-function checkMatch(){if(flipped[0].dataset.symbol==flipped[1].dataset.symbol){matches++;} else{flipped[0].classList.remove("flipped");flipped[0].innerText="";flipped[1].classList.remove("flipped");flipped[1].innerText="";}flipped=[];updateInfo();}
-function updateInfo(){document.getElementById("info").innerText="Matches: "+matches;}
-document.getElementById("reset").onclick=init;init();
+document.addEventListener('DOMContentLoaded',()=>{
+  const grid=document.getElementById('grid');
+  const timeEl=document.getElementById('time');
+  const scoreEl=document.getElementById('score');
+  const sizeEl=document.getElementById('size');
+  let flipped=[], matched=0, time=0, score=0, cards=[], running=true;
+
+  const icons=["🌤️","🌈","💧","🐬","🌿","🍀","⭐","🫧","🐦","🌊","🧊","🌎"];
+
+  function setup(){
+    const w=Number(sizeEl.value);
+    const h=4;
+    const total=w*h;
+    const pairs=total/2;
+    const picks=icons.slice(0,pairs);
+    cards=[...picks,...picks].sort(()=>Math.random()-0.5);
+    grid.style.gridTemplateColumns=`repeat(${w},1fr)`;
+    grid.innerHTML='';
+    flipped=[]; matched=0; time=0; score=0; running=true;
+    cards.forEach((icon,i)=>{
+      const c=document.createElement('div');
+      c.className='card';
+      c.innerHTML=`<div class="face front"></div><div class="face back">${icon}</div>`;
+      c.addEventListener('pointerdown',()=>flip(c,i));
+      grid.appendChild(c);
+    });
+  }
+
+  function flip(card,i){
+    if(card.classList.contains('flipped')||flipped.length===2) return;
+    card.classList.add('flipped');
+    flipped.push({card,i});
+    if(flipped.length===2){
+      const a=cards[flipped[0].i], b=cards[flipped[1].i];
+      if(a===b){
+        matched+=2; score+=10; flipped=[];
+      }else{
+        setTimeout(()=>{
+          flipped.forEach(f=>f.card.classList.remove('flipped'));
+          flipped=[];
+        },350);
+      }
+    }
+  }
+
+  let last=performance.now();
+  function loop(t){
+    const dt=(t-last)/1000; last=t;
+    if(running){time+=dt;}
+    timeEl.textContent=Math.floor(time);
+    scoreEl.textContent=score;
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  document.getElementById('reset').addEventListener('pointerdown',setup);
+  sizeEl.addEventListener('change',setup);
+  setup();
+});
 </script>
 </body>
 </html>
