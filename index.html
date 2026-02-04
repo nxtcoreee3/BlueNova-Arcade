@@ -1,267 +1,447 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#6fe8ff" />
+  <title>BlueNova Arcade</title>
+  <style>
+    :root {
+      --sky-1: #7fefff;
+      --sky-2: #65c7ff;
+      --sky-3: #4ea1ff;
+      --glass: rgba(255, 255, 255, 0.22);
+      --glass-strong: rgba(255, 255, 255, 0.32);
+      --shadow: rgba(7, 22, 60, 0.25);
+      --glow: rgba(116, 231, 255, 0.6);
+      --text: #0c2340;
+      --accent: #6fe8ff;
+      --accent-2: #3fd3ff;
+      --accent-3: #2aa7ff;
+      --btn-top: #c9f7ff;
+      --btn-mid: #7fefff;
+      --btn-bot: #3db7ff;
+      --btn-shadow: rgba(10, 40, 90, 0.35);
+      --panel-radius: 22px;
+      --btn-radius: 18px;
+      --card-radius: 18px;
+    }
 
-<meta name="viewport"
-content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    * { box-sizing: border-box; }
 
-<title>BlueNova Arcade</title>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
 
-<style>
+    body {
+      background: radial-gradient(circle at 20% 10%, #e9feff 0%, var(--sky-1) 25%, var(--sky-2) 55%, var(--sky-3) 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-/* RESET */
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{
-margin:0;height:100%;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
-background:#bfeeff;
-overflow:hidden
-}
+    .app-shell {
+      width: min(1100px, 94vw);
+      margin: 18px auto 24px;
+      padding: 18px;
+      background: var(--glass);
+      border-radius: var(--panel-radius);
+      box-shadow: 0 18px 50px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.7);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.35);
+    }
 
-/* SKY */
-body{
-background:
-radial-gradient(circle at top,#f0feff,#7ad7ff 40%,#0091cc 80%);
-}
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px 18px;
+      text-align: center;
+    }
 
-/* GLASS */
-.glass{
-background:linear-gradient(#ffffffcc,#ffffff44);
-backdrop-filter:blur(20px);
-border-radius:26px;
-box-shadow:inset 0 2px 4px #fff,0 14px 35px #0060aa77;
-}
+    header h1 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 40px);
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 10px var(--glow);
+    }
 
-/* LOCK */
-#lock{
-position:fixed;
-inset:0;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-background:radial-gradient(circle,#fff,#7ad7ff);
-z-index:999;
-}
+    .nav {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
 
-#lock input{
-padding:16px;
-border-radius:20px;
-border:none;
-font-size:18px;
-width:240px;
-margin:10px;
-}
+    .btn {
+      appearance: none;
+      border: none;
+      padding: 12px 14px;
+      border-radius: var(--btn-radius);
+      font-size: 15px;
+      font-weight: 600;
+      color: #063050;
+      background: linear-gradient(180deg, var(--btn-top), var(--btn-mid) 55%, var(--btn-bot));
+      box-shadow:
+        0 6px 16px var(--btn-shadow),
+        inset 0 1px 0 rgba(255,255,255,0.9),
+        inset 0 -2px 6px rgba(0,0,0,0.12);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      min-height: 44px;
+      touch-action: manipulation;
+    }
 
-/* BUTTONS */
-.btn{
-min-height:48px;
-padding:10px 22px;
-border-radius:18px;
-border:none;
-font-weight:bold;
-font-size:16px;
-background:linear-gradient(#ffffff,#8fd9ff);
-box-shadow:inset 0 3px 3px #fff,0 6px 12px #0055aa88;
-color:#013;
-}
+    .btn:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow:
+        0 3px 8px var(--btn-shadow),
+        inset 0 1px 0 rgba(255,255,255,0.8),
+        inset 0 -1px 3px rgba(0,0,0,0.2);
+    }
 
-.smallBtn{
-padding:6px 14px;
-font-size:13px;
-border-radius:14px;
-}
+    .btn.nav-active {
+      outline: 2px solid rgba(255,255,255,0.7);
+      box-shadow:
+        0 0 16px var(--glow),
+        0 8px 20px var(--btn-shadow),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+    }
 
-/* HEADER */
-header{
-margin:12px;
-padding:18px;
-font-size:32px;
-text-align:center;
-color:#013;
-text-shadow:0 0 10px #fff;
-}
+    .section {
+      display: none;
+      gap: 14px;
+      padding: 14px;
+      background: var(--glass-strong);
+      border-radius: var(--panel-radius);
+      box-shadow: 0 10px 30px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
 
-/* NAV */
-nav{
-display:flex;
-gap:10px;
-padding:10px;
-}
+    .section.active { display: block; }
 
-nav button{
-flex:1;
-height:50px;
-border-radius:20px;
-border:none;
-font-size:16px;
-background:linear-gradient(#ffffff,#90d8ff);
-box-shadow:inset 0 3px 3px #fff,0 6px 12px #0055aa66;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+    }
 
-/* SECTIONS */
-.section{
-display:none;
-height:calc(100vh - 230px);
-margin:10px;
-padding:10px;
-overflow:auto;
--webkit-overflow-scrolling:touch;
-}
+    .card {
+      background: rgba(255,255,255,0.5);
+      border-radius: var(--card-radius);
+      padding: 12px;
+      box-shadow: 0 8px 22px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      text-align: center;
+    }
 
-.section.active{display:block}
+    .card h3 {
+      margin: 0;
+      font-size: 15px;
+    }
 
-/* GRID */
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:14px;
-}
+    .frame-wrap {
+      margin-top: 12px;
+      display: grid;
+      gap: 8px;
+    }
 
-/* CARDS */
-.card{
-background:linear-gradient(#ffffffcc,#ffffff44);
-border-radius:22px;
-padding:12px;
-text-align:center;
-box-shadow:inset 0 2px 4px #fff,0 8px 16px #0055aa66;
-}
+    iframe {
+      width: 100%;
+      min-height: 420px;
+      border: none;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px var(--shadow);
+      background: rgba(255,255,255,0.6);
+    }
 
-/* IFRAME */
-iframe{
-width:100%;
-height:60vh;
-border:none;
-border-radius:24px;
-box-shadow:0 16px 40px #00448888;
-}
+    .mini-btn {
+      align-self: flex-end;
+      padding: 8px 12px;
+      font-size: 13px;
+      min-height: 36px;
+    }
 
-footer{text-align:center;color:#013;opacity:.7;padding:8px;}
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
 
-</style>
+    footer {
+      text-align: center;
+      padding: 12px 0 8px;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .lock-screen {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, #f1feff 0%, #78e9ff 35%, #4ab4ff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .lock-panel {
+      width: min(420px, 90vw);
+      padding: 22px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 26px;
+      box-shadow: 0 18px 40px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      text-align: center;
+    }
+
+    .lock-panel h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .lock-panel p {
+      margin: 0 0 14px;
+      font-size: 14px;
+    }
+
+    .lock-panel input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.7);
+      font-size: 16px;
+      outline: none;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.85);
+    }
+
+    .lock-panel .btn {
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 700px) {
+      .nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      iframe { min-height: 320px; }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="lock-screen" id="lockScreen" aria-hidden="false">
+    <div class="lock-panel">
+      <h2>BlueNova Arcade</h2>
+      <p>Password available in Discord</p>
+      <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="current-password" />
+      <button class="btn" id="unlockBtn" type="button">Enter</button>
+    </div>
+  </div>
 
-<!-- LOCK -->
-<div id="lock">
-<h2>Enter Arcade</h2>
-<input id="pass" type="password" placeholder="Access Code">
-<button id="enterBtn" class="btn">Enter</button>
-<p>Password available in Discord</p>
-</div>
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header>
+      <h1>BlueNova Arcade</h1>
+    </header>
 
-<header class="glass">BlueNova Arcade</header>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="btn nav-btn nav-active" type="button" data-tab="games">Games</button>
+      <button class="btn nav-btn" type="button" data-tab="follow">Follow</button>
+      <button class="btn nav-btn" type="button" data-tab="browser">Browser</button>
+      <button class="btn nav-btn" type="button" data-tab="third">3rd Party</button>
+    </nav>
 
-<nav>
-<button data-tab="games">Games</button>
-<button data-tab="follow">Follow</button>
-<button data-tab="browser">Browser</button>
-<button data-tab="third">3rd Party</button>
-</nav>
+    <section class="section active" id="games" aria-labelledby="games-tab">
+      <div class="grid">
+        <div class="card">
+          <h3>Tic Tac Toe</h3>
+          <button class="btn" type="button" data-game="tictactoe.html">Play</button>
+        </div>
+        <div class="card">
+          <h3>Snake</h3>
+          <button class="btn" type="button" data-game="snake.html">Play</button>
+        </div>
+        <div class="card">
+          <h3>Clicker</h3>
+          <button class="btn" type="button" data-game="clicker.html">Play</button>
+        </div>
+        <div class="card">
+          <h3>Memory</h3>
+          <button class="btn" type="button" data-game="memory.html">Play</button>
+        </div>
+        <div class="card">
+          <h3>Connect 4</h3>
+          <button class="btn" type="button" data-game="connect4.html">Play</button>
+        </div>
+        <div class="card">
+          <h3>Pong</h3>
+          <button class="btn" type="button" data-game="pong.html">Play</button>
+        </div>
+        <div class="card">
+          <h3>Maze</h3>
+          <button class="btn" type="button" data-game="maze.html">Play</button>
+        </div>
+        <div class="card">
+          <h3>Mini 2048</h3>
+          <button class="btn" type="button" data-game="mini2048.html">Play</button>
+        </div>
+        <div class="card">
+          <h3>Flappy Bird</h3>
+          <button class="btn" type="button" data-game="flappybird.html">Play</button>
+        </div>
+      </div>
 
-<!-- GAMES -->
-<div id="games" class="section glass active">
+      <div class="frame-wrap">
+        <iframe id="gameFrame" title="Game display" src="/games/tictactoe.html"></iframe>
+        <button class="btn mini-btn" type="button" id="gameFullscreen">Fullscreen</button>
+      </div>
+    </section>
 
-<div class="grid">
+    <section class="section" id="follow" aria-labelledby="follow-tab">
+      <div class="link-grid">
+        <button class="btn" type="button" data-url="https://snapchat.com/t/yQxnxb4r">Snapchat</button>
+        <button class="btn" type="button" data-url="https://www.tiktok.com/@nxtcoreee3">TikTok</button>
+        <button class="btn" type="button" data-url="https://www.instagram.com/nxtcoreee3">Instagram</button>
+        <button class="btn" type="button" data-url="https://discord.gg/8HSrr57nKQ">Discord</button>
+        <button class="btn" type="button" data-url="https://x.com/xnxtcoreee3">X</button>
+        <button class="btn" type="button" data-url="https://t.me/nxtnxxt">Telegram</button>
+        <button class="btn" type="button" data-url="https://github.com/nxtcoreee3">GitHub</button>
+        <button class="btn" type="button" data-url="https://usemixy.com/@nxtcoreee3">UseMixy</button>
+      </div>
+    </section>
 
-<div class="card"><h3>Tic Tac Toe</h3><button class="btn play" data-game="tictactoe.html">Play</button></div>
-<div class="card"><h3>Snake</h3><button class="btn play" data-game="snake.html">Play</button></div>
-<div class="card"><h3>Pet Clicker</h3><button class="btn play" data-game="clicker.html">Play</button></div>
-<div class="card"><h3>Memory</h3><button class="btn play" data-game="memory.html">Play</button></div>
-<div class="card"><h3>Connect 4</h3><button class="btn play" data-game="connect4.html">Play</button></div>
-<div class="card"><h3>Pong</h3><button class="btn play" data-game="pong.html">Play</button></div>
-<div class="card"><h3>Maze</h3><button class="btn play" data-game="maze.html">Play</button></div>
-<div class="card"><h3>2048</h3><button class="btn play" data-game="mini2048.html">Play</button></div>
-<div class="card"><h3>Flappy Bird</h3><button class="btn play" data-game="flappybird.html">Play</button></div>
+    <section class="section" id="browser" aria-labelledby="browser-tab">
+      <div class="frame-wrap">
+        <iframe id="browserFrame" title="Browser" src="/games/browser.html"></iframe>
+        <button class="btn mini-btn" type="button" id="browserFullscreen">Fullscreen</button>
+      </div>
+    </section>
 
-</div>
+    <section class="section" id="third" aria-labelledby="third-tab">
+      <div class="link-grid">
+        <button class="btn" type="button" data-url="https://poki.com">Poki</button>
+        <button class="btn" type="button" data-url="https://spelo.se">Spelo</button>
+        <button class="btn" type="button" data-url="https://kongregate.com">Kongregate</button>
+        <button class="btn" type="button" data-url="https://newgrounds.com">Newgrounds</button>
+      </div>
+    </section>
 
-<button class="btn smallBtn" id="fsGame">Fullscreen</button>
-<iframe id="gameFrame"></iframe>
+    <footer>Credits: nxtcoreee3</footer>
+  </div>
 
-</div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var lockScreen = document.getElementById('lockScreen');
+      var appShell = document.getElementById('appShell');
+      var passwordInput = document.getElementById('passwordInput');
+      var unlockBtn = document.getElementById('unlockBtn');
 
-<!-- FOLLOW -->
-<div id="follow" class="section glass">
-<div class="grid">
-<button class="btn link" data-url="https://snapchat.com/t/yQxnxb4r">Snapchat</button>
-<button class="btn link" data-url="https://www.tiktok.com/@nxtcoreee3">TikTok</button>
-<button class="btn link" data-url="https://www.instagram.com/nxtcoreee3">Instagram</button>
-<button class="btn link" data-url="https://discord.gg/8HSrr57nKQ">Discord</button>
-<button class="btn link" data-url="https://x.com/xnxtcoreee3">X</button>
-<button class="btn link" data-url="https://t.me/nxtnxxt">Telegram</button>
-<button class="btn link" data-url="https://github.com/nxtcoreee3">GitHub</button>
-<button class="btn link" data-url="https://usemixy.com/@nxtcoreee3">Mixy</button>
-</div>
-</div>
+      function unlockIfValid() {
+        if (!passwordInput) return;
+        var value = passwordInput.value || '';
+        if (value === 'catsarecute') {
+          if (lockScreen) lockScreen.classList.add('hidden');
+          if (appShell) appShell.setAttribute('aria-hidden', 'false');
+        } else {
+          passwordInput.value = '';
+          passwordInput.focus();
+        }
+      }
 
-<!-- BROWSER -->
-<div id="browser" class="section glass">
-<button class="btn smallBtn" id="fsBrowser">Fullscreen</button>
-<iframe id="browserFrame" src="games/browser.html"></iframe>
-</div>
+      if (unlockBtn) {
+        unlockBtn.addEventListener('click', unlockIfValid);
+      }
 
-<!-- THIRD -->
-<div id="third" class="section glass">
-<div class="grid">
-<button class="btn link" data-url="https://poki.com">Poki</button>
-<button class="btn link" data-url="https://spelo.se">Spelo</button>
-<button class="btn link" data-url="https://kongregate.com">Kongregate</button>
-<button class="btn link" data-url="https://newgrounds.com">Newgrounds</button>
-</div>
-</div>
+      if (passwordInput) {
+        passwordInput.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter') {
+            unlockIfValid();
+          }
+        });
+      }
 
-<footer>Credits: nxtcoreee3</footer>
+      var navButtons = document.querySelectorAll('.nav-btn');
+      var sections = document.querySelectorAll('.section');
 
-<script>
+      function showTab(tabId) {
+        sections.forEach(function (section) {
+          if (section.id === tabId) {
+            section.classList.add('active');
+          } else {
+            section.classList.remove('active');
+          }
+        });
+        navButtons.forEach(function (btn) {
+          if (btn.getAttribute('data-tab') === tabId) {
+            btn.classList.add('nav-active');
+          } else {
+            btn.classList.remove('nav-active');
+          }
+        });
+      }
 
-document.addEventListener("DOMContentLoaded",()=>{
+      navButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var tab = btn.getAttribute('data-tab');
+          if (tab) showTab(tab);
+        });
+      });
 
-const PASS="catsarecute";
+      var gameFrame = document.getElementById('gameFrame');
+      var gameButtons = document.querySelectorAll('[data-game]');
+      gameButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var game = btn.getAttribute('data-game');
+          if (gameFrame && game) {
+            gameFrame.src = '/games/' + game;
+          }
+        });
+      });
 
-const lock=document.getElementById("lock");
-const pass=document.getElementById("pass");
-const enterBtn=document.getElementById("enterBtn");
-const gameFrame=document.getElementById("gameFrame");
-const browserFrame=document.getElementById("browserFrame");
+      var linkButtons = document.querySelectorAll('[data-url]');
+      linkButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var url = btn.getAttribute('data-url');
+          if (url) {
+            window.open(url, '_blank', 'noopener');
+          }
+        });
+      });
 
-/* ENTER */
-function unlock(){
-if(pass.value===PASS){
-lock.style.display="none";
-}else alert("Wrong password.");
-}
+      function requestFullscreenFor(element) {
+        if (!element) return;
+        var request = element.requestFullscreen || element.webkitRequestFullscreen;
+        if (request) request.call(element);
+      }
 
-enterBtn.addEventListener("click",unlock);
-pass.addEventListener("keydown",e=>{if(e.key==="Enter")unlock();});
+      var gameFullscreen = document.getElementById('gameFullscreen');
+      if (gameFullscreen) {
+        gameFullscreen.addEventListener('click', function () {
+          requestFullscreenFor(gameFrame);
+        });
+      }
 
-/* TABS */
-document.querySelectorAll("nav button").forEach(b=>{
-b.addEventListener("click",()=>{
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.getElementById(b.dataset.tab).classList.add("active");
-});
-});
-
-/* PLAY */
-document.querySelectorAll(".play").forEach(b=>{
-b.addEventListener("click",()=>gameFrame.src="games/"+b.dataset.game);
-});
-
-/* LINKS */
-document.querySelectorAll(".link").forEach(b=>{
-b.addEventListener("click",()=>window.open(b.dataset.url,"_blank"));
-});
-
-/* FULLSCREEN */
-fsGame.onclick=()=>gameFrame.requestFullscreen();
-fsBrowser.onclick=()=>browserFrame.requestFullscreen();
-
-});
-
-</script>
-
+      var browserFrame = document.getElementById('browserFrame');
+      var browserFullscreen = document.getElementById('browserFullscreen');
+      if (browserFullscreen) {
+        browserFullscreen.addEventListener('click', function () {
+          requestFullscreenFor(browserFrame);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
