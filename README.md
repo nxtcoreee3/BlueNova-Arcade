@@ -2,6 +2,8 @@
 
 🚀 BlueNova Arcade is a modern, web-based mini-arcade featuring a full suite of fun games, AI opponents, interactive clicker games with pets, Flappy Bird, and more. Designed with touchscreen support, animations, levels, and a sleek dark-blue interface, it’s perfect for playing directly in your browser.
 
+https://nxtcoreee3.github.io/BlueNova-Arcade/
+
 ⸻
 
 # Features
@@ -31,7 +33,7 @@
 
 # Browser Tab
 	•	Simple in-built browser for exploring web content
-	•	https://nxtcoreee3.github.io/BlueNova-Arcade/
+
 # Design & Animations
 	•	Dark theme with blue accents (#3da9ff)
 	•	Smooth button and element transitions
