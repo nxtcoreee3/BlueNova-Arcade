@@ -27,6 +27,8 @@
       --panel-radius: 24px;
       --btn-radius: 18px;
       --card-radius: 18px;
+
+      --wallpaper: url("wallpapers/alaa_3.jpg.png");
     }
 
     * { box-sizing: border-box; }
@@ -43,6 +45,8 @@
     body {
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       background:
+        linear-gradient(180deg, rgba(8,12,18,0.65), rgba(8,12,18,0.85)),
+        var(--wallpaper) center / cover no-repeat,
         radial-gradient(900px 600px at 20% 10%, rgba(140,210,255,0.25) 0%, transparent 60%),
         radial-gradient(1000px 800px at 80% 0%, rgba(90,170,255,0.18) 0%, transparent 65%),
         linear-gradient(180deg, var(--bg-1), var(--bg-0) 60%, var(--bg-2));
@@ -51,6 +55,7 @@
       align-items: stretch;
       justify-content: center;
       padding: 18px;
+      transition: background 800ms ease;
     }
 
     .app-shell {
@@ -95,7 +100,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 230px 1fr;
+      grid-template-columns: 260px 1fr;
       min-height: 0;
     }
 
@@ -164,6 +169,23 @@
         inset 0 1px 0 rgba(255,255,255,0.2);
     }
 
+    .wallpaper-btn {
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .wallpaper-thumb {
+      width: 62px;
+      height: 40px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 10px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
     .content {
       padding: 14px;
       display: grid;
@@ -184,24 +206,22 @@
 
     .section.active { display: block; }
 
-    .game-scroll {
-      display: flex;
+    .games-vertical {
+      max-height: 360px;
+      overflow-y: auto;
+      display: grid;
       gap: 12px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      scroll-snap-type: x mandatory;
+      padding-right: 6px;
       -webkit-overflow-scrolling: touch;
     }
 
     .game-card {
-      min-width: 200px;
       background: rgba(15, 22, 34, 0.7);
       border-radius: var(--card-radius);
       padding: 10px;
       box-shadow: 0 10px 22px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
       display: grid;
       gap: 8px;
-      scroll-snap-align: start;
     }
 
     .game-title {
@@ -239,10 +259,12 @@
     }
 
     .frame-wrap {
+      display: none;
       margin-top: 10px;
-      display: grid;
       gap: 8px;
     }
+
+    .frame-wrap.active { display: grid; }
 
     .mini-btn {
       align-self: flex-end;
@@ -337,6 +359,7 @@
     @media (max-width: 900px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar { grid-auto-flow: column; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow-x: auto; overflow-y: hidden; }
+      .games-vertical { max-height: 300px; }
     }
 
     @media (max-width: 700px) {
@@ -368,60 +391,60 @@
         <button class="btn nav-btn" type="button" data-tab="follow">Follow</button>
         <button class="btn nav-btn" type="button" data-tab="browser">Browser</button>
         <button class="btn nav-btn" type="button" data-tab="third">3rd Party</button>
+
+        <div class="sidebar-title">Wallpapers</div>
+
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/alaa_3.jpg.png">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/alaa_3.jpg.png')"></span>Ocean Dome
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/asadal_stock_6.jpg">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/asadal_stock_6.jpg')"></span>Dome City
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/asadal_stock_33.jpg">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/asadal_stock_33.jpg')"></span>Island City
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/asadal_stock_78.jpg">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/asadal_stock_78.jpg')"></span>Digital Globe
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/EjOHWqqVgAAg_VB.webp">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/EjOHWqqVgAAg_VB.webp')"></span>Ocean Screen
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/materialdictionary178_1.jpg">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/materialdictionary178_1.jpg')"></span>Forest Bubble
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/materialdictionary232_117.jpg">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/materialdictionary232_117.jpg')"></span>Glass Tower
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/materialdictionary232_118.jpg">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/materialdictionary232_118.jpg')"></span>Paper Plane
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/materialdictionary232_119.jpg">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/materialdictionary232_119.jpg')"></span>Leaf Bubble
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/materialdictionary232_161.jpg">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/materialdictionary232_161.jpg')"></span>Wind Farm
+        </button>
+        <button class="btn wallpaper-btn" type="button" data-wallpaper="wallpapers/megan_t_2.jpg.png">
+          <span class="wallpaper-thumb" style="background-image:url('wallpapers/megan_t_2.jpg.png')"></span>Eco Earth
+        </button>
       </aside>
 
       <main class="content">
         <section class="section active" id="games">
-          <div class="game-scroll">
-            <div class="game-card" data-game="tictactoe.html">
-              <p class="game-title">Tic Tac Toe</p>
-              <div class="preview"><iframe src="games/tictactoe.html" loading="lazy"></iframe></div>
-              <button class="btn mini-btn" type="button" data-game="tictactoe.html">Play</button>
-            </div>
-            <div class="game-card" data-game="snake.html">
-              <p class="game-title">Snake</p>
-              <div class="preview"><iframe src="games/snake.html" loading="lazy"></iframe></div>
-              <button class="btn mini-btn" type="button" data-game="snake.html">Play</button>
-            </div>
-            <div class="game-card" data-game="clicker.html">
-              <p class="game-title">Clicker</p>
-              <div class="preview"><iframe src="games/clicker.html" loading="lazy"></iframe></div>
-              <button class="btn mini-btn" type="button" data-game="clicker.html">Play</button>
-            </div>
-            <div class="game-card" data-game="memory.html">
-              <p class="game-title">Memory</p>
-              <div class="preview"><iframe src="games/memory.html" loading="lazy"></iframe></div>
-              <button class="btn mini-btn" type="button" data-game="memory.html">Play</button>
-            </div>
-            <div class="game-card" data-game="connect4.html">
-              <p class="game-title">Connect 4</p>
-              <div class="preview"><iframe src="games/connect4.html" loading="lazy"></iframe></div>
-              <button class="btn mini-btn" type="button" data-game="connect4.html">Play</button>
-            </div>
-            <div class="game-card" data-game="pong.html">
-              <p class="game-title">Pong</p>
-              <div class="preview"><iframe src="games/pong.html" loading="lazy"></iframe></div>
-              <button class="btn mini-btn" type="button" data-game="pong.html">Play</button>
-            </div>
-            <div class="game-card" data-game="maze.html">
-              <p class="game-title">Maze</p>
-              <div class="preview"><iframe src="games/maze.html" loading="lazy"></iframe></div>
-              <button class="btn mini-btn" type="button" data-game="maze.html">Play</button>
-            </div>
-            <div class="game-card" data-game="mini2048.html">
-              <p class="game-title">Mini 2048</p>
-              <div class="preview"><iframe src="games/mini2048.html" loading="lazy"></iframe></div>
-              <button class="btn mini-btn" type="button" data-game="mini2048.html">Play</button>
-            </div>
-            <div class="game-card" data-game="flappybird.html">
-              <p class="game-title">Flappy Bird</p>
-              <div class="preview"><iframe src="games/flappybird.html" loading="lazy"></iframe></div>
-              <button class="btn mini-btn" type="button" data-game="flappybird.html">Play</button>
-            </div>
+          <div class="games-vertical">
+            <div class="game-card" data-game="tictactoe.html"><p class="game-title">Tic Tac Toe</p><div class="preview"><iframe src="games/tictactoe.html" loading="lazy"></iframe></div><button class="btn mini-btn" type="button" data-game="tictactoe.html">Play</button></div>
+            <div class="game-card" data-game="snake.html"><p class="game-title">Snake</p><div class="preview"><iframe src="games/snake.html" loading="lazy"></iframe></div><button class="btn mini-btn" type="button" data-game="snake.html">Play</button></div>
+            <div class="game-card" data-game="clicker.html"><p class="game-title">Clicker</p><div class="preview"><iframe src="games/clicker.html" loading="lazy"></iframe></div><button class="btn mini-btn" type="button" data-game="clicker.html">Play</button></div>
+            <div class="game-card" data-game="memory.html"><p class="game-title">Memory</p><div class="preview"><iframe src="games/memory.html" loading="lazy"></iframe></div><button class="btn mini-btn" type="button" data-game="memory.html">Play</button></div>
+            <div class="game-card" data-game="connect4.html"><p class="game-title">Connect 4</p><div class="preview"><iframe src="games/connect4.html" loading="lazy"></iframe></div><button class="btn mini-btn" type="button" data-game="connect4.html">Play</button></div>
+            <div class="game-card" data-game="pong.html"><p class="game-title">Pong</p><div class="preview"><iframe src="games/pong.html" loading="lazy"></iframe></div><button class="btn mini-btn" type="button" data-game="pong.html">Play</button></div>
+            <div class="game-card" data-game="maze.html"><p class="game-title">Maze</p><div class="preview"><iframe src="games/maze.html" loading="lazy"></iframe></div><button class="btn mini-btn" type="button" data-game="maze.html">Play</button></div>
+            <div class="game-card" data-game="mini2048.html"><p class="game-title">Mini 2048</p><div class="preview"><iframe src="games/mini2048.html" loading="lazy"></iframe></div><button class="btn mini-btn" type="button" data-game="mini2048.html">Play</button></div>
+            <div class="game-card" data-game="flappybird.html"><p class="game-title">Flappy Bird</p><div class="preview"><iframe src="games/flappybird.html" loading="lazy"></iframe></div><button class="btn mini-btn" type="button" data-game="flappybird.html">Play</button></div>
           </div>
 
-          <div class="frame-wrap">
-            <iframe class="main-frame" id="gameFrame" title="Game display" src="games/tictactoe.html"></iframe>
+          <div class="frame-wrap" id="gameFrameWrap">
+            <iframe class="main-frame" id="gameFrame" title="Game display"></iframe>
             <button class="btn mini-btn" type="button" id="gameFullscreen">Fullscreen</button>
           </div>
         </section>
@@ -440,7 +463,7 @@
         </section>
 
         <section class="section" id="browser">
-          <div class="frame-wrap">
+          <div class="frame-wrap active">
             <iframe class="main-frame" id="browserFrame" title="Browser" src="games/browser.html"></iframe>
             <button class="btn mini-btn" type="button" id="browserFullscreen">Fullscreen</button>
           </div>
@@ -466,6 +489,8 @@
       var appShell = document.getElementById('appShell');
       var passwordInput = document.getElementById('passwordInput');
       var unlockBtn = document.getElementById('unlockBtn');
+      var gameFrame = document.getElementById('gameFrame');
+      var gameFrameWrap = document.getElementById('gameFrameWrap');
 
       function unlockIfValid() {
         if (!passwordInput) return;
@@ -516,11 +541,13 @@
         });
       });
 
-      var gameFrame = document.getElementById('gameFrame');
       document.querySelectorAll('[data-game]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var game = btn.getAttribute('data-game');
-          if (gameFrame && game) gameFrame.src = 'games/' + game;
+          if (gameFrame && game) {
+            gameFrame.src = 'games/' + game;
+            if (gameFrameWrap) gameFrameWrap.classList.add('active');
+          }
         });
       });
 
@@ -528,6 +555,15 @@
         btn.addEventListener('click', function () {
           var url = btn.getAttribute('data-url');
           if (url) window.open(url, '_blank', 'noopener');
+        });
+      });
+
+      document.querySelectorAll('[data-wallpaper]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var wp = btn.getAttribute('data-wallpaper');
+          if (wp) {
+            document.documentElement.style.setProperty('--wallpaper', 'url(\"' + wp + '\")');
+          }
         });
       });
 
