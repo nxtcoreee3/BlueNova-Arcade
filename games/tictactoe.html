@@ -1,85 +1,147 @@
-<!DOCTYPE html>
+// tictactoe.html
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BlueNova Tic Tac Toe</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tic Tac Toe</title>
 <style>
-body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;display:flex;flex-direction:column;align-items:center;}
-h2{color:#3da9ff;margin:10px;}
-#board{display:grid;grid-template-columns:repeat(3,100px);gap:5px;margin-top:10px;}
-#board button{width:100px;height:100px;font-size:48px;background:#0f1f35;color:white;border:none;border-radius:10px;cursor:pointer;transition:0.2s;}
-#board button:hover{background:#153458;}
-#info{margin-top:10px;font-size:20px;}
-#reset{margin-top:10px;padding:10px 20px;font-size:18px;cursor:pointer;border:none;border-radius:8px;background:#0f2547;color:white;transition:0.2s;}
-#reset:hover{background:#1c3f6e;}
+  :root {
+    --aqua:#6fe8ff; --blue:#2aa7ff; --glass:rgba(255,255,255,.2);
+    --text:#e9f7ff; --shadow:rgba(0,0,0,.35);
+  }
+  html,body{height:100%;margin:0;font-family:"Trebuchet MS","Segoe UI",sans-serif;background:
+    radial-gradient(circle at 20% 10%, #e9feff 0%, #9befff 30%, #5cc9ff 60%, #2b84ff 100%);
+    color:var(--text);display:flex;align-items:center;justify-content:center;}
+  .panel{width:min(520px,92vw);padding:16px;border-radius:22px;background:var(--glass);
+    backdrop-filter:blur(14px);box-shadow:0 18px 40px var(--shadow);border:1px solid rgba(255,255,255,.35);}
+  h1{margin:0 0 8px;text-align:center;text-shadow:0 2px 10px rgba(120,220,255,.7);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0;}
+  .btn{min-height:48px;padding:10px 14px;border-radius:18px;border:none;color:#07304f;
+    background:linear-gradient(#fff,#b8f6ff,#5bc9ff);box-shadow:0 8px 16px rgba(0,0,0,.25);
+    font-weight:700;cursor:pointer;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px auto;max-width:360px;}
+  .cell{aspect-ratio:1;background:rgba(255,255,255,.35);border-radius:16px;display:grid;place-items:center;
+    font-size:42px;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 14px rgba(0,0,0,.2);}
+  .win{animation:glow 1s ease-in-out infinite;}
+  @keyframes glow{0%,100%{box-shadow:0 0 10px #7fefff;}50%{box-shadow:0 0 24px #7fefff;}}
+  select{min-height:48px;border-radius:14px;border:none;padding:6px 10px;font-weight:700;}
+  .score{display:flex;gap:14px;justify-content:center;font-size:14px;}
 </style>
 </head>
 <body>
-<h2>BlueNova Tic Tac Toe</h2>
-<div id="board"></div>
-<div id="info">Your turn (X)</div>
-<button id="reset">Restart</button>
-
+<div class="panel">
+  <h1>Tic Tac Toe</h1>
+  <div class="row">
+    <label>Difficulty</label>
+    <select id="difficulty">
+      <option value="easy">Easy</option>
+      <option value="med">Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+    <button class="btn" id="reset">Restart</button>
+  </div>
+  <div class="score">
+    <div>Player: <span id="pScore">0</span></div>
+    <div>AI: <span id="aScore">0</span></div>
+    <div>Draws: <span id="dScore">0</span></div>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
 <script>
-const boardDiv=document.getElementById("board");
-const info=document.getElementById("info");
-let cells=[],turn="X";
+document.addEventListener('DOMContentLoaded',()=>{
+  const grid=document.getElementById('grid');
+  const pScoreEl=document.getElementById('pScore');
+  const aScoreEl=document.getElementById('aScore');
+  const dScoreEl=document.getElementById('dScore');
+  const diffEl=document.getElementById('difficulty');
+  const score=JSON.parse(localStorage.getItem('tttScore')||'{"p":0,"a":0,"d":0}');
+  pScoreEl.textContent=score.p; aScoreEl.textContent=score.a; dScoreEl.textContent=score.d;
 
-function checkWin(){
-  const combos=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-  for(const c of combos){
-    const [a,b,d]=c;
-    if(cells[a].innerText && cells[a].innerText===cells[b].innerText && cells[a].innerText===cells[d].innerText){
-      cells[a].style.background="#3da9ff"; cells[b].style.background="#3da9ff"; cells[d].style.background="#3da9ff";
-      return cells[a].innerText;
+  let board=Array(9).fill('');
+  let turn='X', done=false;
+
+  const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+  function render(){
+    grid.innerHTML='';
+    board.forEach((v,i)=>{
+      const d=document.createElement('div');
+      d.className='cell';
+      d.textContent=v;
+      d.addEventListener('pointerdown',()=>move(i));
+      grid.appendChild(d);
+    });
+  }
+
+  function checkWin(){
+    for(const w of wins){
+      const [a,b,c]=w;
+      if(board[a] && board[a]===board[b] && board[a]===board[c]) return w;
+    }
+    if(board.every(Boolean)) return 'draw';
+    return null;
+  }
+
+  function updateScores(result){
+    if(result==='X'){score.p++;}
+    else if(result==='O'){score.a++;}
+    else if(result==='draw'){score.d++;}
+    localStorage.setItem('tttScore',JSON.stringify(score));
+    pScoreEl.textContent=score.p;aScoreEl.textContent=score.a;dScoreEl.textContent=score.d;
+  }
+
+  function aiMove(){
+    if(done) return;
+    const empties=board.map((v,i)=>v?null:i).filter(v=>v!==null);
+    let choice;
+    const diff=diffEl.value;
+    if(diff==='hard'){
+      // try win/block
+      for(const i of empties){board[i]='O';if(checkWin()){choice=i;}board[i]='';if(choice!=null)break;}
+      if(choice==null){
+        for(const i of empties){board[i]='X';if(checkWin()){choice=i;}board[i]='';if(choice!=null)break;}
+      }
+    }
+    if(choice==null && diff!=='easy'){
+      const center=4;
+      if(!board[center]) choice=center;
+    }
+    if(choice==null) choice=empties[Math.floor(Math.random()*empties.length)];
+    board[choice]='O'; turn='X';
+    finishCheck();
+    render();
+  }
+
+  function finishCheck(){
+    const res=checkWin();
+    if(res){
+      done=true;
+      if(res==='draw'){updateScores('draw');}
+      else{
+        const winner=board[res[0]];
+        updateScores(winner);
+        [...grid.children].forEach((c,i)=>{
+          if(res.includes(i)) c.classList.add('win');
+        });
+      }
     }
   }
-  return null;
-}
 
-function aiMove(){
-  // Simple AI: block player, otherwise random
-  let empty=cells.filter(c=>!c.innerText);
-  if(!empty.length) return;
-  // Block win
-  for(let i=0;i<empty.length;i++){
-    empty[i].innerText="O";
-    if(checkWin()==="O"){return;}
-    empty[i].innerText="";
+  function move(i){
+    if(done || board[i]) return;
+    board[i]=turn;
+    render();
+    finishCheck();
+    if(!done){turn='O'; requestAnimationFrame(aiMove);}
   }
-  // Block player
-  for(let i=0;i<empty.length;i++){
-    empty[i].innerText="X";
-    if(checkWin()==="X"){empty[i].innerText="O";return;}
-    empty[i].innerText="";
-  }
-  // Random
-  let r=empty[Math.floor(Math.random()*empty.length)];
-  r.innerText="O";
-}
 
-function resetBoard(){
-  cells.forEach(c=>{c.innerText="";c.style.background="#0f1f35";});
-  turn="X"; info.innerText="Your turn (X)";
-}
+  document.getElementById('reset').addEventListener('click',()=>{
+    board=Array(9).fill(''); turn='X'; done=false; render();
+  });
 
-for(let i=0;i<9;i++){
-  const b=document.createElement("button");
-  b.onclick=function(){
-    if(b.innerText!=="") return;
-    b.innerText=turn;
-    const winner=checkWin();
-    if(winner){info.innerText=winner+" wins!";return;}
-    turn="O"; aiMove();
-    const winner2=checkWin();
-    if(winner2){info.innerText=winner2+" wins!";return;}
-    turn="X"; info.innerText="Your turn (X)";
-  };
-  boardDiv.appendChild(b);
-  cells.push(b);
-}
-
-document.getElementById("reset").onclick=resetBoard;
+  render();
+});
 </script>
 </body>
 </html>
