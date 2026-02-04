@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b0f16" />
   <title>BlueNova Arcade</title>
   <style>
@@ -41,6 +41,7 @@
     }
 
     body {
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       background:
         radial-gradient(900px 600px at 20% 10%, rgba(140,210,255,0.25) 0%, transparent 60%),
         radial-gradient(1000px 800px at 80% 0%, rgba(90,170,255,0.18) 0%, transparent 65%),
@@ -54,6 +55,7 @@
 
     .app-shell {
       width: min(1200px, 96vw);
+      height: min(92dvh, 980px);
       background:
         linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
       border-radius: var(--panel-radius);
@@ -62,13 +64,12 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       display: grid;
-      grid-template-columns: 220px 1fr;
+      grid-template-rows: auto 1fr;
       overflow: hidden;
       animation: floatIn 700ms ease-out;
     }
 
     header {
-      grid-column: 1 / -1;
       padding: 16px 22px;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
@@ -92,13 +93,21 @@
       text-shadow: 0 2px 12px var(--glow);
     }
 
+    .layout {
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      min-height: 0;
+    }
+
     .sidebar {
-      padding: 16px 12px;
+      padding: 14px 12px;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
       border-right: 1px solid rgba(255,255,255,0.08);
       display: grid;
       gap: 10px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .sidebar-title {
@@ -156,9 +165,11 @@
     }
 
     .content {
-      padding: 16px;
+      padding: 14px;
       display: grid;
       gap: 14px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .section {
@@ -173,31 +184,52 @@
 
     .section.active { display: block; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    .game-scroll {
+      display: flex;
       gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
     }
 
-    .card {
+    .game-card {
+      min-width: 200px;
       background: rgba(15, 22, 34, 0.7);
       border-radius: var(--card-radius);
-      padding: 12px;
+      padding: 10px;
       box-shadow: 0 10px 22px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: center;
-      text-align: center;
+      display: grid;
+      gap: 8px;
+      scroll-snap-align: start;
     }
 
-    .card h3 {
-      margin: 0;
-      font-size: 14px;
+    .game-title {
+      font-size: 13px;
       color: var(--blue-1);
+      margin: 0;
     }
 
-    iframe {
+    .preview {
+      width: 100%;
+      height: 120px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.06);
+      position: relative;
+    }
+
+    .preview iframe {
+      width: 320px;
+      height: 180px;
+      border: 0;
+      transform: scale(0.45);
+      transform-origin: top left;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    iframe.main-frame {
       width: 100%;
       min-height: 420px;
       border: none;
@@ -256,7 +288,6 @@
       color: var(--muted);
     }
 
-    /* Lock screen */
     .lock-screen {
       position: fixed;
       inset: 0;
@@ -281,16 +312,8 @@
       text-align: center;
     }
 
-    .lock-panel h2 {
-      margin: 0 0 8px;
-      font-size: 22px;
-    }
-
-    .lock-panel p {
-      margin: 0 0 14px;
-      font-size: 14px;
-      color: var(--muted);
-    }
+    .lock-panel h2 { margin: 0 0 8px; font-size: 22px; }
+    .lock-panel p { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
 
     .lock-panel input {
       width: 100%;
@@ -304,35 +327,20 @@
       color: #eaf6ff;
     }
 
-    .lock-panel .btn {
-      width: 100%;
-      margin-top: 12px;
-    }
-
+    .lock-panel .btn { width: 100%; margin-top: 12px; }
     .hidden { display: none !important; }
 
-    @keyframes floatIn {
-      0% { transform: translateY(12px); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes fadeLift {
-      0% { opacity: 0; transform: translateY(8px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-    }
+    @keyframes floatIn { 0% { transform: translateY(12px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    @keyframes fadeLift { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
 
     @media (max-width: 900px) {
-      .app-shell { grid-template-columns: 1fr; }
-      .sidebar { grid-auto-flow: column; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { grid-auto-flow: column; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow-x: auto; overflow-y: hidden; }
     }
 
     @media (max-width: 700px) {
-      iframe { min-height: 320px; }
+      iframe.main-frame { min-height: 320px; }
       .sidebar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
   </style>
@@ -353,65 +361,103 @@
       <h1>BlueNova Arcade</h1>
     </header>
 
-    <aside class="sidebar">
-      <div class="sidebar-title">Navigation</div>
-      <button class="btn nav-btn nav-active" type="button" data-tab="games">Games</button>
-      <button class="btn nav-btn" type="button" data-tab="follow">Follow</button>
-      <button class="btn nav-btn" type="button" data-tab="browser">Browser</button>
-      <button class="btn nav-btn" type="button" data-tab="third">3rd Party</button>
-    </aside>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-title">Navigation</div>
+        <button class="btn nav-btn nav-active" type="button" data-tab="games">Games</button>
+        <button class="btn nav-btn" type="button" data-tab="follow">Follow</button>
+        <button class="btn nav-btn" type="button" data-tab="browser">Browser</button>
+        <button class="btn nav-btn" type="button" data-tab="third">3rd Party</button>
+      </aside>
 
-    <main class="content">
-      <section class="section active" id="games">
-        <div class="grid">
-          <div class="card"><h3>Tic Tac Toe</h3><button class="btn" type="button" data-game="tictactoe.html">Play</button></div>
-          <div class="card"><h3>Snake</h3><button class="btn" type="button" data-game="snake.html">Play</button></div>
-          <div class="card"><h3>Clicker</h3><button class="btn" type="button" data-game="clicker.html">Play</button></div>
-          <div class="card"><h3>Memory</h3><button class="btn" type="button" data-game="memory.html">Play</button></div>
-          <div class="card"><h3>Connect 4</h3><button class="btn" type="button" data-game="connect4.html">Play</button></div>
-          <div class="card"><h3>Pong</h3><button class="btn" type="button" data-game="pong.html">Play</button></div>
-          <div class="card"><h3>Maze</h3><button class="btn" type="button" data-game="maze.html">Play</button></div>
-          <div class="card"><h3>Mini 2048</h3><button class="btn" type="button" data-game="mini2048.html">Play</button></div>
-          <div class="card"><h3>Flappy Bird</h3><button class="btn" type="button" data-game="flappybird.html">Play</button></div>
-        </div>
+      <main class="content">
+        <section class="section active" id="games">
+          <div class="game-scroll">
+            <div class="game-card" data-game="tictactoe.html">
+              <p class="game-title">Tic Tac Toe</p>
+              <div class="preview"><iframe src="games/tictactoe.html" loading="lazy"></iframe></div>
+              <button class="btn mini-btn" type="button" data-game="tictactoe.html">Play</button>
+            </div>
+            <div class="game-card" data-game="snake.html">
+              <p class="game-title">Snake</p>
+              <div class="preview"><iframe src="games/snake.html" loading="lazy"></iframe></div>
+              <button class="btn mini-btn" type="button" data-game="snake.html">Play</button>
+            </div>
+            <div class="game-card" data-game="clicker.html">
+              <p class="game-title">Clicker</p>
+              <div class="preview"><iframe src="games/clicker.html" loading="lazy"></iframe></div>
+              <button class="btn mini-btn" type="button" data-game="clicker.html">Play</button>
+            </div>
+            <div class="game-card" data-game="memory.html">
+              <p class="game-title">Memory</p>
+              <div class="preview"><iframe src="games/memory.html" loading="lazy"></iframe></div>
+              <button class="btn mini-btn" type="button" data-game="memory.html">Play</button>
+            </div>
+            <div class="game-card" data-game="connect4.html">
+              <p class="game-title">Connect 4</p>
+              <div class="preview"><iframe src="games/connect4.html" loading="lazy"></iframe></div>
+              <button class="btn mini-btn" type="button" data-game="connect4.html">Play</button>
+            </div>
+            <div class="game-card" data-game="pong.html">
+              <p class="game-title">Pong</p>
+              <div class="preview"><iframe src="games/pong.html" loading="lazy"></iframe></div>
+              <button class="btn mini-btn" type="button" data-game="pong.html">Play</button>
+            </div>
+            <div class="game-card" data-game="maze.html">
+              <p class="game-title">Maze</p>
+              <div class="preview"><iframe src="games/maze.html" loading="lazy"></iframe></div>
+              <button class="btn mini-btn" type="button" data-game="maze.html">Play</button>
+            </div>
+            <div class="game-card" data-game="mini2048.html">
+              <p class="game-title">Mini 2048</p>
+              <div class="preview"><iframe src="games/mini2048.html" loading="lazy"></iframe></div>
+              <button class="btn mini-btn" type="button" data-game="mini2048.html">Play</button>
+            </div>
+            <div class="game-card" data-game="flappybird.html">
+              <p class="game-title">Flappy Bird</p>
+              <div class="preview"><iframe src="games/flappybird.html" loading="lazy"></iframe></div>
+              <button class="btn mini-btn" type="button" data-game="flappybird.html">Play</button>
+            </div>
+          </div>
 
-        <div class="frame-wrap">
-          <iframe id="gameFrame" title="Game display" src="games/tictactoe.html"></iframe>
-          <button class="btn mini-btn" type="button" id="gameFullscreen">Fullscreen</button>
-        </div>
-      </section>
+          <div class="frame-wrap">
+            <iframe class="main-frame" id="gameFrame" title="Game display" src="games/tictactoe.html"></iframe>
+            <button class="btn mini-btn" type="button" id="gameFullscreen">Fullscreen</button>
+          </div>
+        </section>
 
-      <section class="section" id="follow">
-        <div class="link-grid">
-          <button class="btn icon-btn" type="button" data-url="https://snapchat.com/t/yQxnxb4r"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 3c3.2 0 5.5 2.3 5.5 5.5 0 2.7-.9 4.2-.9 5.1 0 .5.5.8 1.2 1.1.9.4 1.8.6 2.4.8-.2.9-1.1 1.4-2.4 1.6-.8.1-1.2.6-1.6 1.2-.5.7-1.2 1-2.2 1.1-.8.1-1.5.4-2 .8-.5-.4-1.2-.7-2-.8-1-.1-1.7-.4-2.2-1.1-.4-.6-.8-1.1-1.6-1.2-1.3-.2-2.2-.7-2.4-1.6.6-.2 1.5-.4 2.4-.8.7-.3 1.2-.6 1.2-1.1 0-.9-.9-2.4-.9-5.1C6.5 5.3 8.8 3 12 3z"/></svg></span>Snapchat</button>
-          <button class="btn icon-btn" type="button" data-url="https://www.tiktok.com/@nxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M15.7 4c.6 1.7 2 3 3.8 3.3V10c-1.6 0-3-.5-4.2-1.3v6.1a4.8 4.8 0 1 1-4.1-4.7v2.6a2.2 2.2 0 1 0 1.6 2.1V4h2.9z"/></svg></span>TikTok</button>
-          <button class="btn icon-btn" type="button" data-url="https://www.instagram.com/nxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6-2.5A2.5 2.5 0 0 0 15.5 2h-7A2.5 2.5 0 0 0 6 4.5v15A2.5 2.5 0 0 0 8.5 22h7a2.5 2.5 0 0 0 2.5-2.5v-15zm-1.5 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg></span>Instagram</button>
-          <button class="btn icon-btn" type="button" data-url="https://discord.gg/8HSrr57nKQ"><span class="icon"><svg viewBox="0 0 24 24"><path d="M19.5 6.2A13.9 13.9 0 0 0 16 5l-.2.3c1.3.4 2.3 1 3.1 1.7-1.2-.6-2.6-1-4-1.2a14.4 14.4 0 0 0-5.8 0c-1.4.2-2.8.6-4 1.2.8-.7 1.8-1.3 3.1-1.7L8 5A13.9 13.9 0 0 0 4.5 6.2 16.6 16.6 0 0 0 3 17.2c1.7 1.3 3.3 2 4.8 2.2l.7-1.2c-.9-.3-1.7-.8-2.4-1.4 1.9 1.2 4.2 1.8 6.9 1.8s5-.6 6.9-1.8c-.7.6-1.5 1-2.4 1.4l.7 1.2c1.5-.2 3.1-.9 4.8-2.2-.1-4-1.3-7.6-3.4-11zM9.5 14.5c-.6 0-1.1-.6-1.1-1.3s.5-1.3 1.1-1.3c.6 0 1.1.6 1.1 1.3s-.5 1.3-1.1 1.3zm5 0c-.6 0-1.1-.6-1.1-1.3s.5-1.3 1.1-1.3c.6 0 1.1.6 1.1 1.3s-.5 1.3-1.1 1.3z"/></svg></span>Discord</button>
-          <button class="btn icon-btn" type="button" data-url="https://x.com/xnxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M18.5 3h3l-6.6 7.5L22 21h-6.6l-3.4-4.6L7 21H4l7-8L2 3h6.7l3.1 4.2L18.5 3z"/></svg></span>X</button>
-          <button class="btn icon-btn" type="button" data-url="https://t.me/nxtnxxt"><span class="icon"><svg viewBox="0 0 24 24"><path d="M21.5 4.5 3.5 11.4c-.8.3-.8 1.5.1 1.7l4.4 1.3 1.7 4.8c.3.9 1.5 1 2 .2l2.5-3.4 4.4 3.3c.7.5 1.7.1 1.9-.8l2.7-12.2c.2-.9-.7-1.7-1.6-1.3zM9.5 13.4l8.2-5.1-6.6 6.1-.3 3-1.1-2.7-3.2-.9z"/></svg></span>Telegram</button>
-          <button class="btn icon-btn" type="button" data-url="https://github.com/nxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.1-3.3-1.1-.4-1.1-1-1.4-1-1.4-.8-.6.1-.6.1-.6.9.1 1.4.9 1.4.9.8 1.4 2.1 1 2.6.8.1-.6.3-1 .6-1.2-2.2-.2-4.5-1.1-4.5-5a3.9 3.9 0 0 1 1-2.7 3.6 3.6 0 0 1 .1-2.6s.9-.3 2.8 1a9.4 9.4 0 0 1 5.2 0c1.9-1.3 2.8-1 2.8-1 .3.8.3 1.8.1 2.6a3.9 3.9 0 0 1 1 2.7c0 3.9-2.3 4.8-4.5 5 .3.3.7.8.7 1.7V21c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg></span>GitHub</button>
-          <button class="btn icon-btn" type="button" data-url="https://usemixy.com/@nxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M6 4h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-3 3v-3H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm2.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg></span>UseMixy</button>
-        </div>
-      </section>
+        <section class="section" id="follow">
+          <div class="link-grid">
+            <button class="btn icon-btn" type="button" data-url="https://snapchat.com/t/yQxnxb4r"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 3c3.2 0 5.5 2.3 5.5 5.5 0 2.7-.9 4.2-.9 5.1 0 .5.5.8 1.2 1.1.9.4 1.8.6 2.4.8-.2.9-1.1 1.4-2.4 1.6-.8.1-1.2.6-1.6 1.2-.5.7-1.2 1-2.2 1.1-.8.1-1.5.4-2 .8-.5-.4-1.2-.7-2-.8-1-.1-1.7-.4-2.2-1.1-.4-.6-.8-1.1-1.6-1.2-1.3-.2-2.2-.7-2.4-1.6.6-.2 1.5-.4 2.4-.8.7-.3 1.2-.6 1.2-1.1 0-.9-.9-2.4-.9-5.1C6.5 5.3 8.8 3 12 3z"/></svg></span>Snapchat</button>
+            <button class="btn icon-btn" type="button" data-url="https://www.tiktok.com/@nxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M15.7 4c.6 1.7 2 3 3.8 3.3V10c-1.6 0-3-.5-4.2-1.3v6.1a4.8 4.8 0 1 1-4.1-4.7v2.6a2.2 2.2 0 1 0 1.6 2.1V4h2.9z"/></svg></span>TikTok</button>
+            <button class="btn icon-btn" type="button" data-url="https://www.instagram.com/nxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6-2.5A2.5 2.5 0 0 0 15.5 2h-7A2.5 2.5 0 0 0 6 4.5v15A2.5 2.5 0 0 0 8.5 22h7a2.5 2.5 0 0 0 2.5-2.5v-15zm-1.5 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg></span>Instagram</button>
+            <button class="btn icon-btn" type="button" data-url="https://discord.gg/8HSrr57nKQ"><span class="icon"><svg viewBox="0 0 24 24"><path d="M19.5 6.2A13.9 13.9 0 0 0 16 5l-.2.3c1.3.4 2.3 1 3.1 1.7-1.2-.6-2.6-1-4-1.2a14.4 14.4 0 0 0-5.8 0c-1.4.2-2.8.6-4 1.2.8-.7 1.8-1.3 3.1-1.7L8 5A13.9 13.9 0 0 0 4.5 6.2 16.6 16.6 0 0 0 3 17.2c1.7 1.3 3.3 2 4.8 2.2l.7-1.2c-.9-.3-1.7-.8-2.4-1.4 1.9 1.2 4.2 1.8 6.9 1.8s5-.6 6.9-1.8c-.7.6-1.5 1-2.4 1.4l.7 1.2c1.5-.2 3.1-.9 4.8-2.2-.1-4-1.3-7.6-3.4-11zM9.5 14.5c-.6 0-1.1-.6-1.1-1.3s.5-1.3 1.1-1.3c.6 0 1.1.6 1.1 1.3s-.5 1.3-1.1 1.3zm5 0c-.6 0-1.1-.6-1.1-1.3s.5-1.3 1.1-1.3c.6 0 1.1.6 1.1 1.3s-.5 1.3-1.1 1.3z"/></svg></span>Discord</button>
+            <button class="btn icon-btn" type="button" data-url="https://x.com/xnxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M18.5 3h3l-6.6 7.5L22 21h-6.6l-3.4-4.6L7 21H4l7-8L2 3h6.7l3.1 4.2L18.5 3z"/></svg></span>X</button>
+            <button class="btn icon-btn" type="button" data-url="https://t.me/nxtnxxt"><span class="icon"><svg viewBox="0 0 24 24"><path d="M21.5 4.5 3.5 11.4c-.8.3-.8 1.5.1 1.7l4.4 1.3 1.7 4.8c.3.9 1.5 1 2 .2l2.5-3.4 4.4 3.3c.7.5 1.7.1 1.9-.8l2.7-12.2c.2-.9-.7-1.7-1.6-1.3zM9.5 13.4l8.2-5.1-6.6 6.1-.3 3-1.1-2.7-3.2-.9z"/></svg></span>Telegram</button>
+            <button class="btn icon-btn" type="button" data-url="https://github.com/nxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.1-3.3-1.1-.4-1.1-1-1.4-1-1.4-.8-.6.1-.6.1-.6.9.1 1.4.9 1.4.9.8 1.4 2.1 1 2.6.8.1-.6.3-1 .6-1.2-2.2-.2-4.5-1.1-4.5-5a3.9 3.9 0 0 1 1-2.7 3.6 3.6 0 0 1 .1-2.6s.9-.3 2.8 1a9.4 9.4 0 0 1 5.2 0c1.9-1.3 2.8-1 2.8-1 .3.8.3 1.8.1 2.6a3.9 3.9 0 0 1 1 2.7c0 3.9-2.3 4.8-4.5 5 .3.3.7.8.7 1.7V21c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg></span>GitHub</button>
+            <button class="btn icon-btn" type="button" data-url="https://usemixy.com/@nxtcoreee3"><span class="icon"><svg viewBox="0 0 24 24"><path d="M6 4h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-3 3v-3H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm2.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg></span>UseMixy</button>
+          </div>
+        </section>
 
-      <section class="section" id="browser">
-        <div class="frame-wrap">
-          <iframe id="browserFrame" title="Browser" src="games/browser.html"></iframe>
-          <button class="btn mini-btn" type="button" id="browserFullscreen">Fullscreen</button>
-        </div>
-      </section>
+        <section class="section" id="browser">
+          <div class="frame-wrap">
+            <iframe class="main-frame" id="browserFrame" title="Browser" src="games/browser.html"></iframe>
+            <button class="btn mini-btn" type="button" id="browserFullscreen">Fullscreen</button>
+          </div>
+        </section>
 
-      <section class="section" id="third">
-        <div class="link-grid">
-          <button class="btn" type="button" data-url="https://poki.com">Poki</button>
-          <button class="btn" type="button" data-url="https://spelo.se">Spelo</button>
-          <button class="btn" type="button" data-url="https://kongregate.com">Kongregate</button>
-          <button class="btn" type="button" data-url="https://newgrounds.com">Newgrounds</button>
-        </div>
-      </section>
+        <section class="section" id="third">
+          <div class="link-grid">
+            <button class="btn" type="button" data-url="https://poki.com">Poki</button>
+            <button class="btn" type="button" data-url="https://spelo.se">Spelo</button>
+            <button class="btn" type="button" data-url="https://kongregate.com">Kongregate</button>
+            <button class="btn" type="button" data-url="https://newgrounds.com">Newgrounds</button>
+          </div>
+        </section>
 
-      <footer>Credits: nxtcoreee3</footer>
-    </main>
+        <footer>Credits: nxtcoreee3</footer>
+      </main>
+    </div>
   </div>
 
   <script>
@@ -454,18 +500,12 @@
 
       function showTab(tabId) {
         sections.forEach(function (section) {
-          if (section.id === tabId) {
-            section.classList.add('active');
-          } else {
-            section.classList.remove('active');
-          }
+          if (section.id === tabId) section.classList.add('active');
+          else section.classList.remove('active');
         });
         navButtons.forEach(function (btn) {
-          if (btn.getAttribute('data-tab') === tabId) {
-            btn.classList.add('nav-active');
-          } else {
-            btn.classList.remove('nav-active');
-          }
+          if (btn.getAttribute('data-tab') === tabId) btn.classList.add('nav-active');
+          else btn.classList.remove('nav-active');
         });
       }
 
@@ -477,23 +517,17 @@
       });
 
       var gameFrame = document.getElementById('gameFrame');
-      var gameButtons = document.querySelectorAll('[data-game]');
-      gameButtons.forEach(function (btn) {
+      document.querySelectorAll('[data-game]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var game = btn.getAttribute('data-game');
-          if (gameFrame && game) {
-            gameFrame.src = 'games/' + game;
-          }
+          if (gameFrame && game) gameFrame.src = 'games/' + game;
         });
       });
 
-      var linkButtons = document.querySelectorAll('[data-url]');
-      linkButtons.forEach(function (btn) {
+      document.querySelectorAll('[data-url]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var url = btn.getAttribute('data-url');
-          if (url) {
-            window.open(url, '_blank', 'noopener');
-          }
+          if (url) window.open(url, '_blank', 'noopener');
         });
       });
 
