@@ -3,99 +3,40 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,
-initial-scale=1,
-maximum-scale=1,
-user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
 <title>BlueNova Arcade</title>
 
 <style>
 
-/* ================= SYSTEM RESET ================= */
+/* RESET */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial;background:#001428;overflow:hidden}
 
-*{
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent;
-}
-
-html,body{
-width:100%;
-height:100%;
-margin:0;
-font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Arial;
-background:#001428;
-overflow:hidden;
-touch-action:manipulation;
-}
-
-/* ================= BACKGROUND ================= */
-
+/* BACKGROUND */
 body{
-background:
-radial-gradient(circle at top,#d9f7ff,#001020),
-linear-gradient(#4bbcff33,#000);
+background:radial-gradient(circle at top,#d9f7ff,#001020);
 }
 
-/* soft moving glow */
-
-body::after{
-content:"";
-position:fixed;
-inset:-50%;
-background:
-linear-gradient(45deg,transparent,#ffffff22,transparent);
-animation:lightmove 18s linear infinite;
-pointer-events:none;
-}
-
-@keyframes lightmove{
-0%{transform:translateX(-40%) rotate(0deg);}
-100%{transform:translateX(40%) rotate(360deg);}
-}
-
-/* ================= FLOATING BUBBLES ================= */
-
-.bubble{
-position:absolute;
-width:60px;
-height:60px;
-border-radius:50%;
-background:radial-gradient(circle,#fff,#7fd4ff);
-opacity:.18;
-animation:float 25s linear infinite;
-pointer-events:none;
-}
-
-@keyframes float{
-from{transform:translateY(120vh);}
-to{transform:translateY(-120vh);}
-}
-
-/* ================= GLASS PANELS ================= */
-
+/* GLASS */
 .glass{
 background:linear-gradient(#ffffff66,#ffffff11);
 backdrop-filter:blur(18px);
 border-radius:26px;
-box-shadow:
-inset 0 2px 5px #fff8,
-0 15px 40px #000a;
+box-shadow:inset 0 2px 5px #fff8,0 15px 40px #000a;
 }
 
-/* ================= LOCK SCREEN ================= */
-
+/* LOCK */
 #lock{
 position:fixed;
 inset:0;
 display:flex;
 flex-direction:column;
-justify-content:center;
 align-items:center;
-background:radial-gradient(circle,#e4fbff,#001020);
+justify-content:center;
+background:#001020;
 z-index:999;
+color:white;
 }
 
 #lock input{
@@ -103,28 +44,32 @@ padding:16px;
 border-radius:16px;
 border:none;
 font-size:18px;
-width:240px;
+width:220px;
+margin:10px;
 }
 
-#lock p{opacity:.8}
+.btn{
+min-height:52px;
+padding:10px 22px;
+border-radius:18px;
+border:none;
+font-weight:bold;
+background:linear-gradient(#f5fcff,#78c2ff);
+box-shadow:inset 0 2px 4px #fff,0 8px 16px #0009;
+color:#012;
+}
 
-/* ================= HEADER ================= */
-
+/* HEADER */
 header{
 margin:12px;
 padding:20px;
-font-size:32px;
+font-size:30px;
 text-align:center;
-text-shadow:0 0 12px #9fe0ff;
+color:white;
 }
 
-/* ================= NAV ================= */
-
-nav{
-display:flex;
-gap:12px;
-padding:12px;
-}
+/* NAV */
+nav{display:flex;gap:12px;padding:12px;}
 
 nav button{
 flex:1;
@@ -133,18 +78,10 @@ border-radius:22px;
 border:none;
 font-size:16px;
 background:linear-gradient(#fff,#7fc7ff);
-box-shadow:
-inset 0 3px 3px #fff,
-0 8px 16px #0008;
-color:#012;
+box-shadow:inset 0 3px 3px #fff,0 8px 16px #0008;
 }
 
-nav button.active{
-background:linear-gradient(#fff,#a9dcff);
-}
-
-/* ================= SECTIONS ================= */
-
+/* SECTIONS */
 .section{
 display:none;
 height:calc(100vh - 240px);
@@ -154,109 +91,105 @@ overflow:auto;
 -webkit-overflow-scrolling:touch;
 }
 
-.section.active{display:block;}
+.section.active{display:block}
 
-/* ================= GRID ================= */
+/* GAME CARDS */
+.card{
+background:linear-gradient(#ffffff55,#ffffff11);
+border-radius:20px;
+padding:12px;
+text-align:center;
+box-shadow:inset 0 2px 3px #fff,0 6px 14px #0008;
+}
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:16px;
 }
 
-/* ================= BUTTONS ================= */
-
-.grid button,
-.btn{
-min-height:52px;
-border-radius:20px;
-border:none;
-font-weight:bold;
-background:linear-gradient(#f5fcff,#78c2ff);
-box-shadow:
-inset 0 2px 4px #fff,
-0 8px 16px #0009;
-color:#012;
-}
-
-/* ================= IFRAMES ================= */
-
 iframe{
 width:100%;
-height:70vh;
+height:65vh;
 border:none;
 border-radius:22px;
 box-shadow:0 20px 50px #000c;
 }
 
-/* ================= FOOTER ================= */
-
-footer{
-text-align:center;
-opacity:.7;
-padding:10px;
-}
-
-/* ================= ORIENTATION ================= */
-
-@media (orientation:landscape){
-iframe{height:60vh;}
-}
-
-/* ================= iPAD SPECIFIC ================= */
-
-@media (min-width:768px){
-
-.grid{
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-}
-
-nav button{font-size:18px;}
-
-}
+footer{text-align:center;opacity:.7;padding:10px;}
 
 </style>
 </head>
 
 <body>
 
-<!-- bubbles -->
-<div class="bubble" style="left:10%;animation-delay:0s"></div>
-<div class="bubble" style="left:35%;animation-delay:6s"></div>
-<div class="bubble" style="left:60%;animation-delay:12s"></div>
-<div class="bubble" style="left:80%;animation-delay:18s"></div>
-
 <!-- LOCK -->
 <div id="lock">
 <h2>Enter Arcade</h2>
 <input id="pass" type="password" placeholder="Access Code">
-<button class="btn" onclick="unlock()">Enter</button>
+<button id="enterBtn" class="btn">Enter</button>
 <p>Password available in Discord</p>
 </div>
 
 <header class="glass">BlueNova Arcade</header>
 
 <nav>
-<button class="active" onclick="tab('games')">Games</button>
+<button onclick="tab('games')">Games</button>
 <button onclick="tab('follow')">Follow</button>
 <button onclick="tab('browser')">Browser</button>
 <button onclick="tab('third')">3rd Party</button>
 </nav>
 
 <!-- GAMES -->
-
 <div id="games" class="section glass active">
 
 <div class="grid">
-<button data-game="tictactoe.html">Tic Tac Toe</button>
-<button data-game="snake.html">Snake</button>
-<button data-game="clicker.html">Pet Clicker</button>
-<button data-game="memory.html">Memory</button>
-<button data-game="connect4.html">Connect 4</button>
-<button data-game="pong.html">Pong</button>
-<button data-game="maze.html">Maze</button>
-<button data-game="mini2048.html">2048</button>
-<button data-game="flappybird.html">Flappy Bird</button>
+
+<div class="card">
+<h3>Tic Tac Toe</h3>
+<button class="btn" onclick="loadGame('tictactoe.html')">Play</button>
+</div>
+
+<div class="card">
+<h3>Snake</h3>
+<button class="btn" onclick="loadGame('snake.html')">Play</button>
+</div>
+
+<div class="card">
+<h3>Pet Clicker</h3>
+<button class="btn" onclick="loadGame('clicker.html')">Play</button>
+</div>
+
+<div class="card">
+<h3>Memory</h3>
+<button class="btn" onclick="loadGame('memory.html')">Play</button>
+</div>
+
+<div class="card">
+<h3>Connect 4</h3>
+<button class="btn" onclick="loadGame('connect4.html')">Play</button>
+</div>
+
+<div class="card">
+<h3>Pong</h3>
+<button class="btn" onclick="loadGame('pong.html')">Play</button>
+</div>
+
+<div class="card">
+<h3>Maze</h3>
+<button class="btn" onclick="loadGame('maze.html')">Play</button>
+</div>
+
+<div class="card">
+<h3>2048</h3>
+<button class="btn" onclick="loadGame('mini2048.html')">Play</button>
+</div>
+
+<div class="card">
+<h3>Flappy Bird</h3>
+<button class="btn" onclick="loadGame('flappybird.html')">Play</button>
+</div>
+
 </div>
 
 <button class="btn" onclick="fullscreen(gameFrame)">Fullscreen</button>
@@ -265,35 +198,32 @@ nav button{font-size:18px;}
 </div>
 
 <!-- FOLLOW -->
-
 <div id="follow" class="section glass">
 <div class="grid">
-<button onclick="openLink('https://snapchat.com/t/yQxnxb4r')">Snapchat</button>
-<button onclick="openLink('https://www.tiktok.com/@nxtcoreee3')">TikTok</button>
-<button onclick="openLink('https://www.instagram.com/nxtcoreee3')">Instagram</button>
-<button onclick="openLink('https://discord.gg/8HSrr57nKQ')">Discord</button>
-<button onclick="openLink('https://x.com/xnxtcoreee3')">X</button>
-<button onclick="openLink('https://t.me/nxtnxxt')">Telegram</button>
-<button onclick="openLink('https://github.com/nxtcoreee3')">GitHub</button>
-<button onclick="openLink('https://usemixy.com/@nxtcoreee3')">Mixy</button>
+<button class="btn" onclick="openLink('https://snapchat.com/t/yQxnxb4r')">Snapchat</button>
+<button class="btn" onclick="openLink('https://www.tiktok.com/@nxtcoreee3')">TikTok</button>
+<button class="btn" onclick="openLink('https://www.instagram.com/nxtcoreee3')">Instagram</button>
+<button class="btn" onclick="openLink('https://discord.gg/8HSrr57nKQ')">Discord</button>
+<button class="btn" onclick="openLink('https://x.com/xnxtcoreee3')">X</button>
+<button class="btn" onclick="openLink('https://t.me/nxtnxxt')">Telegram</button>
+<button class="btn" onclick="openLink('https://github.com/nxtcoreee3')">GitHub</button>
+<button class="btn" onclick="openLink('https://usemixy.com/@nxtcoreee3')">Mixy</button>
 </div>
 </div>
 
 <!-- BROWSER -->
-
 <div id="browser" class="section glass">
 <button class="btn" onclick="fullscreen(browserFrame)">Fullscreen</button>
 <iframe id="browserFrame" src="games/browser.html"></iframe>
 </div>
 
 <!-- THIRD -->
-
 <div id="third" class="section glass">
 <div class="grid">
-<button onclick="openLink('https://poki.com')">Poki</button>
-<button onclick="openLink('https://spelo.se')">Spelo</button>
-<button onclick="openLink('https://kongregate.com')">Kongregate</button>
-<button onclick="openLink('https://newgrounds.com')">Newgrounds</button>
+<button class="btn" onclick="openLink('https://poki.com')">Poki</button>
+<button class="btn" onclick="openLink('https://spelo.se')">Spelo</button>
+<button class="btn" onclick="openLink('https://kongregate.com')">Kongregate</button>
+<button class="btn" onclick="openLink('https://newgrounds.com')">Newgrounds</button>
 </div>
 </div>
 
@@ -303,12 +233,13 @@ nav button{font-size:18px;}
 
 const PASS="catsarecute";
 
+document.getElementById("enterBtn").addEventListener("click",unlock);
+pass.addEventListener("keydown",e=>{if(e.key==="Enter")unlock();});
+
 function unlock(){
 if(pass.value===PASS){
 lock.style.display="none";
-}else{
-alert("Wrong password.");
-}
+}else alert("Wrong password.");
 }
 
 function tab(n){
@@ -316,17 +247,15 @@ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(n).classList.add("active");
 }
 
-document.querySelectorAll("[data-game]").forEach(b=>{
-b.onclick=()=>gameFrame.src="games/"+b.dataset.game;
-});
+function loadGame(file){
+gameFrame.src="games/"+file;
+}
 
 function fullscreen(el){
 if(el.requestFullscreen)el.requestFullscreen();
 }
 
-function openLink(u){
-window.open(u,"_blank");
-}
+function openLink(u){window.open(u,"_blank");}
 
 </script>
 
