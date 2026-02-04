@@ -1,47 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
 <title>BlueNova Arcade</title>
 
 <style>
 
 /* RESET */
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;background:#c9f4ff;overflow:hidden}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+margin:0;height:100%;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
+background:#bfeeff;
+overflow:hidden
+}
 
-/* BACKGROUND SKY */
+/* SKY */
 body{
 background:
-radial-gradient(circle at top,#eaffff,#7bd6ff 40%,#0090cc 80%);
-}
-
-/* MOVING LIGHT */
-body::after{
-content:"";
-position:fixed;
-inset:-50%;
-background:linear-gradient(45deg,transparent,#ffffff55,transparent);
-animation:light 20s linear infinite;
-pointer-events:none;
-}
-
-@keyframes light{
-from{transform:translateX(-40%) rotate(0deg);}
-to{transform:translateX(40%) rotate(360deg);}
+radial-gradient(circle at top,#f0feff,#7ad7ff 40%,#0091cc 80%);
 }
 
 /* GLASS */
 .glass{
-background:linear-gradient(#ffffffaa,#ffffff33);
-backdrop-filter:blur(18px);
+background:linear-gradient(#ffffffcc,#ffffff44);
+backdrop-filter:blur(20px);
 border-radius:26px;
-box-shadow:
-inset 0 2px 5px #fff,
-0 12px 30px #0050aa66;
+box-shadow:inset 0 2px 4px #fff,0 14px 35px #0060aa77;
 }
 
 /* LOCK */
@@ -50,9 +39,9 @@ position:fixed;
 inset:0;
 display:flex;
 flex-direction:column;
-align-items:center;
 justify-content:center;
-background:radial-gradient(circle,#ffffff,#6fd0ff);
+align-items:center;
+background:radial-gradient(circle,#fff,#7ad7ff);
 z-index:999;
 }
 
@@ -68,18 +57,16 @@ margin:10px;
 /* BUTTONS */
 .btn{
 min-height:48px;
-padding:10px 20px;
+padding:10px 22px;
 border-radius:18px;
 border:none;
 font-weight:bold;
-background:linear-gradient(#ffffff,#8bd6ff);
-box-shadow:
-inset 0 3px 3px #fff,
-0 6px 12px #0055aa88;
-color:#014;
+font-size:16px;
+background:linear-gradient(#ffffff,#8fd9ff);
+box-shadow:inset 0 3px 3px #fff,0 6px 12px #0055aa88;
+color:#013;
 }
 
-/* SMALL BUTTON */
 .smallBtn{
 padding:6px 14px;
 font-size:13px;
@@ -92,7 +79,7 @@ margin:12px;
 padding:18px;
 font-size:32px;
 text-align:center;
-color:#014;
+color:#013;
 text-shadow:0 0 10px #fff;
 }
 
@@ -125,13 +112,14 @@ overflow:auto;
 
 .section.active{display:block}
 
-/* GAME CARDS */
+/* GRID */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:14px;
 }
 
+/* CARDS */
 .card{
 background:linear-gradient(#ffffffcc,#ffffff44);
 border-radius:22px;
@@ -140,6 +128,7 @@ text-align:center;
 box-shadow:inset 0 2px 4px #fff,0 8px 16px #0055aa66;
 }
 
+/* IFRAME */
 iframe{
 width:100%;
 height:60vh;
@@ -148,7 +137,7 @@ border-radius:24px;
 box-shadow:0 16px 40px #00448888;
 }
 
-footer{text-align:center;color:#014;opacity:.7;padding:8px;}
+footer{text-align:center;color:#013;opacity:.7;padding:8px;}
 
 </style>
 </head>
@@ -166,10 +155,10 @@ footer{text-align:center;color:#014;opacity:.7;padding:8px;}
 <header class="glass">BlueNova Arcade</header>
 
 <nav>
-<button onclick="tab('games')">Games</button>
-<button onclick="tab('follow')">Follow</button>
-<button onclick="tab('browser')">Browser</button>
-<button onclick="tab('third')">3rd Party</button>
+<button data-tab="games">Games</button>
+<button data-tab="follow">Follow</button>
+<button data-tab="browser">Browser</button>
+<button data-tab="third">3rd Party</button>
 </nav>
 
 <!-- GAMES -->
@@ -177,19 +166,19 @@ footer{text-align:center;color:#014;opacity:.7;padding:8px;}
 
 <div class="grid">
 
-<div class="card"><h3>Tic Tac Toe</h3><button class="btn" onclick="loadGame('tictactoe.html')">Play</button></div>
-<div class="card"><h3>Snake</h3><button class="btn" onclick="loadGame('snake.html')">Play</button></div>
-<div class="card"><h3>Pet Clicker</h3><button class="btn" onclick="loadGame('clicker.html')">Play</button></div>
-<div class="card"><h3>Memory</h3><button class="btn" onclick="loadGame('memory.html')">Play</button></div>
-<div class="card"><h3>Connect 4</h3><button class="btn" onclick="loadGame('connect4.html')">Play</button></div>
-<div class="card"><h3>Pong</h3><button class="btn" onclick="loadGame('pong.html')">Play</button></div>
-<div class="card"><h3>Maze</h3><button class="btn" onclick="loadGame('maze.html')">Play</button></div>
-<div class="card"><h3>2048</h3><button class="btn" onclick="loadGame('mini2048.html')">Play</button></div>
-<div class="card"><h3>Flappy Bird</h3><button class="btn" onclick="loadGame('flappybird.html')">Play</button></div>
+<div class="card"><h3>Tic Tac Toe</h3><button class="btn play" data-game="tictactoe.html">Play</button></div>
+<div class="card"><h3>Snake</h3><button class="btn play" data-game="snake.html">Play</button></div>
+<div class="card"><h3>Pet Clicker</h3><button class="btn play" data-game="clicker.html">Play</button></div>
+<div class="card"><h3>Memory</h3><button class="btn play" data-game="memory.html">Play</button></div>
+<div class="card"><h3>Connect 4</h3><button class="btn play" data-game="connect4.html">Play</button></div>
+<div class="card"><h3>Pong</h3><button class="btn play" data-game="pong.html">Play</button></div>
+<div class="card"><h3>Maze</h3><button class="btn play" data-game="maze.html">Play</button></div>
+<div class="card"><h3>2048</h3><button class="btn play" data-game="mini2048.html">Play</button></div>
+<div class="card"><h3>Flappy Bird</h3><button class="btn play" data-game="flappybird.html">Play</button></div>
 
 </div>
 
-<button class="btn smallBtn" onclick="fullscreen(gameFrame)">Fullscreen</button>
+<button class="btn smallBtn" id="fsGame">Fullscreen</button>
 <iframe id="gameFrame"></iframe>
 
 </div>
@@ -197,30 +186,30 @@ footer{text-align:center;color:#014;opacity:.7;padding:8px;}
 <!-- FOLLOW -->
 <div id="follow" class="section glass">
 <div class="grid">
-<button class="btn" onclick="openLink('https://snapchat.com/t/yQxnxb4r')">Snapchat</button>
-<button class="btn" onclick="openLink('https://www.tiktok.com/@nxtcoreee3')">TikTok</button>
-<button class="btn" onclick="openLink('https://www.instagram.com/nxtcoreee3')">Instagram</button>
-<button class="btn" onclick="openLink('https://discord.gg/8HSrr57nKQ')">Discord</button>
-<button class="btn" onclick="openLink('https://x.com/xnxtcoreee3')">X</button>
-<button class="btn" onclick="openLink('https://t.me/nxtnxxt')">Telegram</button>
-<button class="btn" onclick="openLink('https://github.com/nxtcoreee3')">GitHub</button>
-<button class="btn" onclick="openLink('https://usemixy.com/@nxtcoreee3')">Mixy</button>
+<button class="btn link" data-url="https://snapchat.com/t/yQxnxb4r">Snapchat</button>
+<button class="btn link" data-url="https://www.tiktok.com/@nxtcoreee3">TikTok</button>
+<button class="btn link" data-url="https://www.instagram.com/nxtcoreee3">Instagram</button>
+<button class="btn link" data-url="https://discord.gg/8HSrr57nKQ">Discord</button>
+<button class="btn link" data-url="https://x.com/xnxtcoreee3">X</button>
+<button class="btn link" data-url="https://t.me/nxtnxxt">Telegram</button>
+<button class="btn link" data-url="https://github.com/nxtcoreee3">GitHub</button>
+<button class="btn link" data-url="https://usemixy.com/@nxtcoreee3">Mixy</button>
 </div>
 </div>
 
 <!-- BROWSER -->
 <div id="browser" class="section glass">
-<button class="btn smallBtn" onclick="fullscreen(browserFrame)">Fullscreen</button>
+<button class="btn smallBtn" id="fsBrowser">Fullscreen</button>
 <iframe id="browserFrame" src="games/browser.html"></iframe>
 </div>
 
 <!-- THIRD -->
 <div id="third" class="section glass">
 <div class="grid">
-<button class="btn" onclick="openLink('https://poki.com')">Poki</button>
-<button class="btn" onclick="openLink('https://spelo.se')">Spelo</button>
-<button class="btn" onclick="openLink('https://kongregate.com')">Kongregate</button>
-<button class="btn" onclick="openLink('https://newgrounds.com')">Newgrounds</button>
+<button class="btn link" data-url="https://poki.com">Poki</button>
+<button class="btn link" data-url="https://spelo.se">Spelo</button>
+<button class="btn link" data-url="https://kongregate.com">Kongregate</button>
+<button class="btn link" data-url="https://newgrounds.com">Newgrounds</button>
 </div>
 </div>
 
@@ -228,290 +217,49 @@ footer{text-align:center;color:#014;opacity:.7;padding:8px;}
 
 <script>
 
+document.addEventListener("DOMContentLoaded",()=>{
+
 const PASS="catsarecute";
 
-enterBtn.addEventListener("click",unlock);
-pass.addEventListener("keydown",e=>{if(e.key==="Enter")unlock();});
+const lock=document.getElementById("lock");
+const pass=document.getElementById("pass");
+const enterBtn=document.getElementById("enterBtn");
+const gameFrame=document.getElementById("gameFrame");
+const browserFrame=document.getElementById("browserFrame");
 
+/* ENTER */
 function unlock(){
 if(pass.value===PASS){
 lock.style.display="none";
 }else alert("Wrong password.");
 }
 
-function tab(n){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.getElementById(n).classList.add("active");
-}
-
-function loadGame(f){
-gameFrame.src="games/"+f;
-}
-
-function fullscreen(el){
-if(el.requestFullscreen)el.requestFullscreen();
-}
-
-function openLink(u){window.open(u,"_blank");}
-
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
-<title>BlueNova Arcade</title>
-
-<style>
-
-/* RESET */
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;background:#c9f4ff;overflow:hidden}
-
-/* BACKGROUND SKY */
-body{
-background:
-radial-gradient(circle at top,#eaffff,#7bd6ff 40%,#0090cc 80%);
-}
-
-/* MOVING LIGHT */
-body::after{
-content:"";
-position:fixed;
-inset:-50%;
-background:linear-gradient(45deg,transparent,#ffffff55,transparent);
-animation:light 20s linear infinite;
-pointer-events:none;
-}
-
-@keyframes light{
-from{transform:translateX(-40%) rotate(0deg);}
-to{transform:translateX(40%) rotate(360deg);}
-}
-
-/* GLASS */
-.glass{
-background:linear-gradient(#ffffffaa,#ffffff33);
-backdrop-filter:blur(18px);
-border-radius:26px;
-box-shadow:
-inset 0 2px 5px #fff,
-0 12px 30px #0050aa66;
-}
-
-/* LOCK */
-#lock{
-position:fixed;
-inset:0;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-background:radial-gradient(circle,#ffffff,#6fd0ff);
-z-index:999;
-}
-
-#lock input{
-padding:16px;
-border-radius:20px;
-border:none;
-font-size:18px;
-width:240px;
-margin:10px;
-}
-
-/* BUTTONS */
-.btn{
-min-height:48px;
-padding:10px 20px;
-border-radius:18px;
-border:none;
-font-weight:bold;
-background:linear-gradient(#ffffff,#8bd6ff);
-box-shadow:
-inset 0 3px 3px #fff,
-0 6px 12px #0055aa88;
-color:#014;
-}
-
-/* SMALL BUTTON */
-.smallBtn{
-padding:6px 14px;
-font-size:13px;
-border-radius:14px;
-}
-
-/* HEADER */
-header{
-margin:12px;
-padding:18px;
-font-size:32px;
-text-align:center;
-color:#014;
-text-shadow:0 0 10px #fff;
-}
-
-/* NAV */
-nav{
-display:flex;
-gap:10px;
-padding:10px;
-}
-
-nav button{
-flex:1;
-height:50px;
-border-radius:20px;
-border:none;
-font-size:16px;
-background:linear-gradient(#ffffff,#90d8ff);
-box-shadow:inset 0 3px 3px #fff,0 6px 12px #0055aa66;
-}
-
-/* SECTIONS */
-.section{
-display:none;
-height:calc(100vh - 230px);
-margin:10px;
-padding:10px;
-overflow:auto;
--webkit-overflow-scrolling:touch;
-}
-
-.section.active{display:block}
-
-/* GAME CARDS */
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:14px;
-}
-
-.card{
-background:linear-gradient(#ffffffcc,#ffffff44);
-border-radius:22px;
-padding:12px;
-text-align:center;
-box-shadow:inset 0 2px 4px #fff,0 8px 16px #0055aa66;
-}
-
-iframe{
-width:100%;
-height:60vh;
-border:none;
-border-radius:24px;
-box-shadow:0 16px 40px #00448888;
-}
-
-footer{text-align:center;color:#014;opacity:.7;padding:8px;}
-
-</style>
-</head>
-
-<body>
-
-<!-- LOCK -->
-<div id="lock">
-<h2>Enter Arcade</h2>
-<input id="pass" type="password" placeholder="Access Code">
-<button id="enterBtn" class="btn">Enter</button>
-<p>Password available in Discord</p>
-</div>
-
-<header class="glass">BlueNova Arcade</header>
-
-<nav>
-<button onclick="tab('games')">Games</button>
-<button onclick="tab('follow')">Follow</button>
-<button onclick="tab('browser')">Browser</button>
-<button onclick="tab('third')">3rd Party</button>
-</nav>
-
-<!-- GAMES -->
-<div id="games" class="section glass active">
-
-<div class="grid">
-
-<div class="card"><h3>Tic Tac Toe</h3><button class="btn" onclick="loadGame('tictactoe.html')">Play</button></div>
-<div class="card"><h3>Snake</h3><button class="btn" onclick="loadGame('snake.html')">Play</button></div>
-<div class="card"><h3>Pet Clicker</h3><button class="btn" onclick="loadGame('clicker.html')">Play</button></div>
-<div class="card"><h3>Memory</h3><button class="btn" onclick="loadGame('memory.html')">Play</button></div>
-<div class="card"><h3>Connect 4</h3><button class="btn" onclick="loadGame('connect4.html')">Play</button></div>
-<div class="card"><h3>Pong</h3><button class="btn" onclick="loadGame('pong.html')">Play</button></div>
-<div class="card"><h3>Maze</h3><button class="btn" onclick="loadGame('maze.html')">Play</button></div>
-<div class="card"><h3>2048</h3><button class="btn" onclick="loadGame('mini2048.html')">Play</button></div>
-<div class="card"><h3>Flappy Bird</h3><button class="btn" onclick="loadGame('flappybird.html')">Play</button></div>
-
-</div>
-
-<button class="btn smallBtn" onclick="fullscreen(gameFrame)">Fullscreen</button>
-<iframe id="gameFrame"></iframe>
-
-</div>
-
-<!-- FOLLOW -->
-<div id="follow" class="section glass">
-<div class="grid">
-<button class="btn" onclick="openLink('https://snapchat.com/t/yQxnxb4r')">Snapchat</button>
-<button class="btn" onclick="openLink('https://www.tiktok.com/@nxtcoreee3')">TikTok</button>
-<button class="btn" onclick="openLink('https://www.instagram.com/nxtcoreee3')">Instagram</button>
-<button class="btn" onclick="openLink('https://discord.gg/8HSrr57nKQ')">Discord</button>
-<button class="btn" onclick="openLink('https://x.com/xnxtcoreee3')">X</button>
-<button class="btn" onclick="openLink('https://t.me/nxtnxxt')">Telegram</button>
-<button class="btn" onclick="openLink('https://github.com/nxtcoreee3')">GitHub</button>
-<button class="btn" onclick="openLink('https://usemixy.com/@nxtcoreee3')">Mixy</button>
-</div>
-</div>
-
-<!-- BROWSER -->
-<div id="browser" class="section glass">
-<button class="btn smallBtn" onclick="fullscreen(browserFrame)">Fullscreen</button>
-<iframe id="browserFrame" src="games/browser.html"></iframe>
-</div>
-
-<!-- THIRD -->
-<div id="third" class="section glass">
-<div class="grid">
-<button class="btn" onclick="openLink('https://poki.com')">Poki</button>
-<button class="btn" onclick="openLink('https://spelo.se')">Spelo</button>
-<button class="btn" onclick="openLink('https://kongregate.com')">Kongregate</button>
-<button class="btn" onclick="openLink('https://newgrounds.com')">Newgrounds</button>
-</div>
-</div>
-
-<footer>Credits: nxtcoreee3</footer>
-
-<script>
-
-const PASS="catsarecute";
-
 enterBtn.addEventListener("click",unlock);
 pass.addEventListener("keydown",e=>{if(e.key==="Enter")unlock();});
 
-function unlock(){
-if(pass.value===PASS){
-lock.style.display="none";
-}else alert("Wrong password.");
-}
-
-function tab(n){
+/* TABS */
+document.querySelectorAll("nav button").forEach(b=>{
+b.addEventListener("click",()=>{
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.getElementById(n).classList.add("active");
-}
+document.getElementById(b.dataset.tab).classList.add("active");
+});
+});
 
-function loadGame(f){
-gameFrame.src="games/"+f;
-}
+/* PLAY */
+document.querySelectorAll(".play").forEach(b=>{
+b.addEventListener("click",()=>gameFrame.src="games/"+b.dataset.game);
+});
 
-function fullscreen(el){
-if(el.requestFullscreen)el.requestFullscreen();
-}
+/* LINKS */
+document.querySelectorAll(".link").forEach(b=>{
+b.addEventListener("click",()=>window.open(b.dataset.url,"_blank"));
+});
 
-function openLink(u){window.open(u,"_blank");}
+/* FULLSCREEN */
+fsGame.onclick=()=>gameFrame.requestFullscreen();
+fsBrowser.onclick=()=>browserFrame.requestFullscreen();
+
+});
 
 </script>
 
