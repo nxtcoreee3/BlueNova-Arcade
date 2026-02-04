@@ -1,24 +1,54 @@
-<!DOCTYPE html>
+// pong.html
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BlueNova Pong</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Pong</title>
 <style>
-body{margin:0;background:#050b15;color:white;font-family:Arial;text-align:center;}
-canvas{display:block;margin:auto;margin-top:15px;border:2px solid #3da9ff;}
+  :root{--glass:rgba(255,255,255,.2);--shadow:rgba(0,0,0,.35);}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(circle at 20% 10%, #e9feff 0%, #9befff 30%, #5cc9ff 60%, #2b84ff 100%);
+    font-family:"Trebuchet MS","Segoe UI",sans-serif;color:#e9f7ff;display:flex;align-items:center;justify-content:center;}
+  .panel{width:min(520px,94vw);padding:14px;border-radius:22px;background:var(--glass);
+    backdrop-filter:blur(14px);box-shadow:0 18px 40px var(--shadow);}
+  canvas{width:100%;height:auto;border-radius:18px;background:rgba(0,0,0,.2);}
 </style>
 </head>
 <body>
-<h2>BlueNova Pong</h2>
-<canvas id="c" width="400" height="300"></canvas>
+<div class="panel"><canvas id="c" width="420" height="280"></canvas></div>
 <script>
-const canvas=document.getElementById("c"),ctx=canvas.getContext("2d");
-let p1=130,p2=130,ball={x:200,y:150,vx:3,vy:3},score={p1:0,p2:0};
-document.addEventListener("keydown",e=>{if(e.key=="ArrowUp")p2-=10;if(e.key=="ArrowDown")p2+=10;if(e.key=="w")p1-=10;if(e.key=="s")p1+=10;});
-function draw(){ctx.fillStyle="black";ctx.fillRect(0,0,400,300);ctx.fillStyle="white";ctx.fillRect(10,p1,10,60);ctx.fillRect(380,p2,10,60);ctx.beginPath();ctx.arc(ball.x,ball.y,8,0,Math.PI*2);ctx.fillStyle="#3da9ff";ctx.fill();ctx.font="16px Arial";ctx.fillText(score.p1,160,20);ctx.fillText(score.p2,220,20);}
-function update(){ball.x+=ball.vx;ball.y+=ball.vy;if(ball.y<0||ball.y>292)ball.vy*=-1;if(ball.x<20 && ball.y>p1 && ball.y<p1+60)ball.vx*=-1;if(ball.x>372 && ball.y>p2 && ball.y<p2+60)ball.vx*=-1;if(ball.x<0){score.p2++;ball.x=200;ball.y=150;}if(ball.x>400){score.p1++;ball.x=200;ball.y=150;}}
-function loop(){update();draw();requestAnimationFrame(loop);}
-loop();
+document.addEventListener('DOMContentLoaded',()=>{
+  const c=document.getElementById('c'); const ctx=c.getContext('2d');
+  let ball={x:210,y:140,vx:120,vy:80};
+  let p={y:120}, ai={y:120}, scoreP=0, scoreA=0;
+
+  let last=performance.now();
+  function loop(t){
+    const dt=(t-last)/1000; last=t;
+    ball.x+=ball.vx*dt; ball.y+=ball.vy*dt;
+    if(ball.y<10||ball.y>270) ball.vy*=-1;
+    if(ball.x<20 && ball.y>p.y-30 && ball.y<p.y+30){ball.vx*=-1.05;}
+    if(ball.x>400 && ball.y>ai.y-30 && ball.y<ai.y+30){ball.vx*=-1.05;}
+    if(ball.x<0){scoreA++; reset();}
+    if(ball.x>420){scoreP++; reset();}
+    ai.y+=((ball.y-ai.y)*dt*2);
+
+    ctx.clearRect(0,0,420,280);
+    ctx.fillStyle='rgba(255,255,255,0.8)';
+    ctx.fillRect(8,p.y-30,8,60);
+    ctx.fillRect(404,ai.y-30,8,60);
+    ctx.beginPath(); ctx.arc(ball.x,ball.y,6,0,Math.PI*2); ctx.fill();
+    ctx.fillText(scoreP+" : "+scoreA,195,20);
+    requestAnimationFrame(loop);
+  }
+  function reset(){ball={x:210,y:140,vx:120*(Math.random()>0.5?1:-1),vy:80};}
+  c.addEventListener('pointermove',e=>{
+    const r=c.getBoundingClientRect();
+    p.y=((e.clientY-r.top)/r.height)*280;
+  });
+  requestAnimationFrame(loop);
+});
 </script>
 </body>
 </html>
